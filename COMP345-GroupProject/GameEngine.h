@@ -22,7 +22,7 @@ using std::string;
 // Functions for STARTUP of Game
 void start();
 void mapLoader();
-bool mapValidated();
+bool mapValidate();
 int playersAdded(int addPlayer);
 
 // Functions for PLAY of Game

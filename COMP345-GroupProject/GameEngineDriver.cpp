@@ -20,17 +20,28 @@
 using namespace std;
 
 int main() {
+    // SETTING UP FOR A GAMEPLAY
     start();
     mapLoader();
-    mapValidated();
+    mapValidate();
     playersAdded(2);
+
 
     //TESTING VARIABLES
     string countries[] = {"France", "England", "Amsterdam"};
+    int turn = 0;      // Counter for Player turns
 
-    assignReinforcement(countries);
-    executeOrder();
-    issueOrder();
+    // BEGIN GAMEPLAY
+    do{
+        std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+        std::cout << "TURN: ["<< turn << "]"<< std::endl;
+        assignReinforcement(countries);
+        executeOrder();
+        issueOrder();
+        turn++;
+    } while(turn < 6);
+    
+
     win();
 
     return 0;
