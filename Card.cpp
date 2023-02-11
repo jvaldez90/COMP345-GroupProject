@@ -35,7 +35,6 @@ Deck::Deck()
 
 Deck::~Deck() {
     delete(pointerCard);
-    delete(tempCard);
 }
 
 Deck::Deck(const Deck &deck) {
