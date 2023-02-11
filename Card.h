@@ -1,35 +1,95 @@
 #pragma once
-#include <vector>
+
 #include <string>
-#include <random>
+#include <vector>
 
-class Card {
- public:
-  explicit Card(const std::string& type) : type_(type) {}
-  void play();
-  const std::string& getType() const { return type_; }
+class Card
+{
+public:
+    Card() : choice(new std::string)
+    {
+        cardTypes.push_back("bomb");
+        cardTypes.push_back("reinforcement");
+        cardTypes.push_back("blockade");
+        cardTypes.push_back("airlift");
+        cardTypes.push_back("diplomacy");
+    }
+    ~Card() { delete choice; }
 
- private:
-  std::string type_;
+    Card(const Card &card);
+
+    std::vector<std::string> *getpointer();
+
+    void initialType();
+
+    void printVectorType();
+
+    void setCardType(int i);
+
+    std::string *getCardType();
+
+private:
+    std::vector<std::string> cardTypes;
+    std::string *choice;
 };
 
-class Deck {
- public:
-  Deck();
-  Card draw();
-  int size() const { return cards_.size(); }
+class Deck : public Card
+{
 
- private:
-  std::vector<Card> cards_;
-  std::mt19937 generator_;
+public:
+    Deck();
+    ~Deck();
+
+    Deck(const Deck &deck);
+
+    Deck &operator=(const Deck &deck);
+
+    void initialDeck();
+
+    void printDeck();
+
+    void printDeckSize();
+
+    Card *draw();
+
+    void addCard(Card *add_card);
+
+private:
+    std::vector<Card *> deck;
+    Card *pointerCard;
+    Card *tempCard;
 };
 
-class Hand {
- public:
-  void addCard(const Card& card) { cards_.push_back(card); }
-  int size() const { return cards_.size(); }
-  void playCards();
+class Hand : public Deck
+{
 
- private:
-  std::vector<Card> cards_;
+public:
+    Hand();
+    ~Hand();
+
+    Hand(const Hand &hand);
+
+    Hand &operator=(const Hand &hand);
+
+    void setHand(Card *card);
+
+    void printHand();
+
+    void printPlayingCard();
+
+    void play(Card *card, Deck *deck);
+
+    void cardToDeck(Deck *deck);
+
+    std::vector<Card *> *getHand();
+
+    std::vector<Card *> *getPlayingCard();
+
+    void removePlayingFromHand(Card *card);
+
+    void deletePlayingCards();
+
+private:
+    std::vector<Card *> handCards;
+    std::vector<Card *> playingCards;
 };
