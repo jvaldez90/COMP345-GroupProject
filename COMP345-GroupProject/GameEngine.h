@@ -6,7 +6,7 @@
  * Section S
  * Professor: Amin Ranj Bar
  * 
- * GROUP PROJECT: ASSIGNMENT 1
+ * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
