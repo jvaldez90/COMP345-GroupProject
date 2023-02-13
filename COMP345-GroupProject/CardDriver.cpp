@@ -26,7 +26,7 @@ int main()
     hand.printHand();
     deck.printDeckSize();
 
-    cout << (" test to play all Cards of the HandCards...then remove it from HandCards and put the cards into vec_deck_cards \n") << endl;
+    cout << (" test to play all Cards of the HandCards...then remove it from HandCards and put the cards into deck \n") << endl;
     int hand_size = hand.getHand()->size();
     for (int k = 0; k < hand_size; k++)
     {
