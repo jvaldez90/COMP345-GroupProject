@@ -51,6 +51,7 @@ Deck & Deck::operator=(const Deck &deck) {
     return *this;
 }
 
+//creating an initial deck
 void Deck::initialDeck() {
 
     for (int i = 0; i < 30; i++) {
@@ -83,6 +84,7 @@ void Deck::printDeckSize() {
     cout << (" The deck currently contains ") << deck.size() << (" cards. \n") << endl;
 }
 
+//drawing a random card from the choices available
 Card* Deck::draw() {
     int temp = (rand() % deck.size());
     tempCard = deck.at(temp);
@@ -92,6 +94,7 @@ Card* Deck::draw() {
     return tempCard;
 }
 
+//adding card to deck using push_back vector
 void Deck::addCard(Card *add_card) {
     deck.push_back(add_card);
 }
@@ -113,6 +116,7 @@ Hand &Hand::operator=(const Hand &hand) {
     return *this;
 }
 
+//adding card to the hand using push_back vector 
 void Hand::setHand(Card *card) {
     handCards.push_back(card);
 }
@@ -148,6 +152,7 @@ void Hand::play(Card* card, Deck* deck) {
     playingCards.pop_back();
 }
 
+//adding card to deck
 void Hand::cardToDeck(Deck* deck) {
     for (int i = 0; i < playingCards.size(); i++) {
         deck->addCard(playingCards.at(i));
