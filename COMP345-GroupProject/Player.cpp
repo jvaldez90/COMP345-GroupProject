@@ -5,7 +5,7 @@
 // Constructor
 Player::Player(std::string playerName)
 {
-    this->playerName = playerName;
+    this->playerName = &playerName;
     this->hand = new Hand();
     OL = new OrderList();
 
@@ -19,7 +19,7 @@ Player::~Player()
     delete hand;
     delete OL;
 
-    std::cout << "A Player has been deleted." std::endl;
+    std::cout << "A Player has been deleted." << std::endl;
 }
 
 // divideTerritories method that randomizes the list of territories and assigns it to Defend and to Attack
@@ -58,27 +58,27 @@ std::vector<Territory *> Player::toAttack()
 void Player::issueOrder(std::string orderType)
 {
     Order *newOrder = nullptr;
-    if (orderType = "deploy")
+    if (orderType == "deploy")
     {
         newOrder = new Deploy();
     }
-    else if (orderType = "advance")
+    else if (orderType == "advance")
     {
         newOrder = new Advance();
     }
-    else if (orderType = "bomb")
+    else if (orderType == "bomb")
     {
         newOrder = new Bomb();
     }
-    else if (orderType = "blockade")
+    else if (orderType == "blockade")
     {
         newOrder = new Blockade();
     }
-    else if (orderType = "airlift")
+    else if (orderType == "airlift")
     {
         newOrder = new Airlift();
     }
-    else if (orderType = "neogtiate")
+    else if (orderType == "negotiate")
     {
         newOrder = new Negotiate();
     }
@@ -87,5 +87,5 @@ void Player::issueOrder(std::string orderType)
         std::cout << "Invalid order type, please try again." << std::endl;
     }
 
-    this->OL->addOrder(newOrder);
+    this->OL->add(newOrder);
 }
