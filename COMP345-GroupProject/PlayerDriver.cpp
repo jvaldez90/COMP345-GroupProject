@@ -1,23 +1,20 @@
 #include "Player.cpp"
-#include "Orders.cpp"
-#include "Cards.cpp"
-#include "Map.cpp"
 
 int main()
 {
     // Create Player
     Player *p1 = new Player("John Doe");
 
-    Territory *t1 = new Territory("USA", "North America");
-    Territory *t2 = new Territory("Mexico", "North America");
-    Territory *t3 = new Territory("Canada", "North America");
-    Territory *t4 = new Territory("France", "Europe");
-    Territory *t5 = new Territory("Germany", "Europe");
-    Territory *t6 = new Territory("Italy", "Europe");
-    Territory *t7 = new Territory("Japan", "Asia");
-    Territory *t8 = new Territory("China", "Asia");
-    Territory *t9 = new Territory("India", "Asia");
-    Territory *t10 = new Territory("Brazil", "South America");
+    Territory *t1 = new Territory(1, "USA", 1, 2, 3);
+    Territory *t2 = new Territory(2, "Mexico", 1, 7, 6);
+    Territory *t3 = new Territory(3, "Canada", 1, 3, 5);
+    Territory *t4 = new Territory(4, "France", 2, 76, 43);
+    Territory *t5 = new Territory(5, "Germany", 2, 34, 22);
+    Territory *t6 = new Territory(6, "Italy", 2, 78, 53);
+    Territory *t7 = new Territory(7, "Japan", 3, 2, 34);
+    Territory *t8 = new Territory(8, "China", 3, 55, 32);
+    Territory *t9 = new Territory(9, "India", 3, 34, 34);
+    Territory *t10 = new Territory(10, "Brazil", 4, 13, 2);
 
     // Add territories to players territories
     p1->territories.push_back(t1);
@@ -54,13 +51,6 @@ int main()
     p1->issueOrder("negotiate");
     p1->issueOrder("bomb");
 
-    // Get the orders list from the player object
-    std::vector<Order *> OL = player.getOL();
-
-    // Display the orders list
-    std::cout << "Orders List: " << std::endl;
-    for (int i = 0; i < OL.size(); i++)
-    {
-        std::cout << i + 1 << ". " << OL[i]->getType() << std::endl;
-    }
+    std::cout << "Deleting player..." << std::endl;
+    delete p1;
 }
