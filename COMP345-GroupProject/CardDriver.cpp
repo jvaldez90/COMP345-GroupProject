@@ -9,15 +9,19 @@ int main()
 
     Deck deck;
 
+    //initialize deck
     deck.initialDeck();
 
+    //create a Hand object 
     Hand hand;
 
+    //print the current size of the deck right after initialization
     deck.printDeckSize();
 
     cout << "Assigning 5 cards randomly into the hand deck\n"
          << endl;
 
+    //handing cards out randomly using the draw() method
     for (int i = 0; i < 5; i++)
     {
         hand.setHand(deck.draw());
