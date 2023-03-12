@@ -7,6 +7,7 @@
  * Professor: Amin Ranj Bar
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
+ *                ASSINGMENT 2 PART 2: GAME ENGINE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -18,101 +19,88 @@
 #include <string>
 #include "GameEngine.h"
 
-    Game::Game(){
+
+    GameEngine::GameEngine(){
+        isRunning = true;
     };
-    Game::~Game(){ 
+    GameEngine::~GameEngine(){ 
     };
-    
+    void GameEngine::Run(){
+        while(isRunning){
+                GameEngine::startUpPhase();
+                GameEngine::Play();
+            }
+    }
+    void GameEngine::startUpPhase(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::startUpPhase()" << std::endl;
+        std::cout << "============================" << std::endl;
 
-// // Global Variables
-// bool done = false;                  // Control for while-loops
-// const int NUMBER_OF_ORDERS = 3;       // Temporary Variable
+        // GAME SET UP
+        // While command is a valid GameState
+        {
+            // Loop  loadmap command 
+            GameEngine::mapLoaded();
 
-// // Functions for [STARTUP] of Game
-// void start(){
-//     std::cout << std::endl;
-//     std::cout << "============================" << std::endl;
-//     std::cout << "  STARTING UP WARZONE GAME  " << std::endl;
-//     std::cout << "============================" << std::endl;
-    
-// }
-// void mapLoader(){
-//     // Load Map
-//     // ** Make a call to Class Map::loader();
-//     std::cout << "Call to mapLoader()" << std::endl;
+            // validatemap command
+            GameEngine::mapValidated();
 
-//     string map;    
-//     std::cout << std::endl << "Select a Map: " << std::endl;
-//     std::cin >> map;
-//     std::cout << "    Map Selected: " << map << std::endl;
+            // Loop addPlayer command
+            GameEngine::playersAdded();
+        }
+        // assigncountries command
+    }
+    void GameEngine::Play(){
+        // While-loop
+        GameEngine::assignReinforcement();
+        {
+            // Loop issueorder command
+            GameEngine::issueOrders();
+            // endissueorders command to end loop
 
-//     bool loadMap = false;       // Temporary variable
-//     while(!loadMap){
-//         // Call to Map::loader();
-//         std::cout << "    Loading the following Map: " << map << std::endl;
-//         loadMap = true;
-//     }
-// }
-// bool mapValidate(){
-//     // Check if map loaded is valid
-//     // ** Make a call to Class Map::validate();
-//     std::cout << "Call to mapValidated()"<< std::endl;
-//     if (true){   
-//         // If map loaded exists, it should be valid
-//         return true;
-//     }
-// }
-// int playersAdded(int addPlayer){
-//     // ** Make a call to Player() class to create a new Player
-//     std::cout << "Call to playersAdded()"<< std::endl;
-   
-//     do{
-//         // Display add Player
-//         for(int i = 1; i <= addPlayer; i++){
-//             std::cout << "    Players Added: " << i << std::endl;
-//         }
-//         done = true;
-//     } while(!done);
-//     return addPlayer;
-// }
+            // Loop exeorder command
+            GameEngine::executeOrderes();
+            // endexeorders command to end loop
 
-// // Functions for [PLAY] of Game
-// void assignReinforcement(string assignCountries[]){
-//     // ** Make a call to Player() class to assign 
-//     //    a list of territories to each Player
-//     std::cout << "Call to assignReinforcements()" << std::endl;
-//     std::cout << "    Assigning lists of territories to each player." << std::endl;
-//     // Player::issueOrders();
-//     do {
-//         for (int i = 0; i < NUMBER_OF_ORDERS; i++){
-//             std::cout << "    Assigning Countries ... " << std::endl;
-//         }
-//         done = true;
-//     } while(!done);
-// }
-// void executeOrder(){
-//     // ** Make a call to OrderList::execute();
-//     std::cout << "Call to executeOrder()" << std::endl;
-//     std::cout << "    Player ______ is executing orders." << std::endl;
-//     do {
-//         for (int i = 0; i < NUMBER_OF_ORDERS; i++){
-//             std::cout << "    Executing Orders ... " << std::endl;
-//         }
-//         done = true;
-//     } while(!done);
-// }
-// void issueOrder(){
-//     // Make a call to Player::issueOrder();
-//     std::cout << "Call to issueOrders()" << std::endl;
-//     std::cout << "    Player ______ is issuing an order." << std::endl;
-//     do {
-//         for (int i = 0; i < NUMBER_OF_ORDERS; i++){
-//             std::cout << "    Issuing Orders ... " << std::endl;
-//         }
-//         done = true;
-//     } while(!done);
-// }
-// void win(){
-//     std::cout << "Call to win()" << std::endl;
-//     std::cout << "    Player _____ wins " << std::endl;
-// }
+            // win command to end loop
+        }
+        
+        GameEngine::Win();
+    }
+    void GameEngine::Win(){
+        // if play command
+        // GameEngine::startUpPhase();
+        // else end command
+        GameEngine::Shutdown();
+    }
+    void GameEngine::mapLoaded(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::mapLoaded()" << std::endl;
+        std::cout << "============================" << std::endl;
+    }
+    void GameEngine::mapValidated(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::mapValidated()" << std::endl;
+        std::cout << "============================" << std::endl;
+    }
+    void GameEngine::playersAdded(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::playersAdded()" << std::endl;
+        std::cout << "============================" << std::endl;
+
+    }
+    void GameEngine::assignReinforcement(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::assignReinforcement()" << std::endl;
+        std::cout << "============================" << std::endl;
+    }
+    void GameEngine::issueOrders(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::issueOrders()" << std::endl;
+        std::cout << "============================" << std::endl;
+    }
+    void GameEngine::executeOrderes(){
+        std::cout << std::endl << std::endl;
+        std::cout << "GameEngine::executeOrders()" << std::endl;
+        std::cout << "============================" << std::endl;
+    }

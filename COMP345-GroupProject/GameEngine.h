@@ -7,6 +7,7 @@
  * Professor: Amin Ranj Bar
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
+ *                ASSINGMENT 2 PART 2: GAME ENGINE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -21,58 +22,44 @@ using std::string;
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-class Game {
+class GameEngine {
     public:
-        Game();
+        GameEngine();
+        string command;
         enum GameState {
-            LOAD_MAP, 
-            VALIDATE_MAP, 
-            ADD_PLAYER, 
-            ASSIGN_COUNTRIES, 
-            ISSUE_ORDER, 
-            END_ISSUE_ORDERS, 
-            EXECUTE_ORDER, 
-            END_EXECUTE_ORDERS, 
-            WIN,
-            END
+            loadmap, 
+            validatemap, 
+            addplayer, 
+            assigncountries, 
+            issueorder, 
+            endissueorders, 
+            exeorder, 
+            endexeorders, 
+            win,
+            end,
+            play,
+            gamestart
         };
-        void Run (){
-            while(_running){
-                startUpPhase();
-                play();
-            }
-        }
-        ~Game();
+        void Run ();
+        void Play();
+        void Shutdown() { isRunning = false; }
+        ~GameEngine();
     private:
-        // Varialbles
-        bool _running = true;
+        // Private Data Members
+        bool isRunning;
+
         // Functions for [STARTUP] of Game        
-        void startUpPhase(){}
-        void mapLoaded(){}
-        void mapValidated(){}
-        void playersAdded(){}
+        void startUpPhase();
+        void mapLoaded();
+        void mapValidated();
+        void playersAdded();
 
         // Functions for [PLAY] of Game
-        void play(){}
-        void assingReinforcement(){}
-        void issueOrders(){}
-        void executeOrderes(){}
-        void win(){}
+        void assignReinforcement();
+        void issueOrders();
+        void executeOrderes();
+        void Win();
 
 };
-
-
-// // Functions for STARTUP of Game
-// void start();
-// void mapLoader();
-// bool mapValidate();
-// int playersAdded(int addPlayer);
-
-// // Functions for PLAY of Game
-// void assignReinforcement(string assignCountries[]);
-// void executeOrder();
-// void issueOrder();
-// void win();
-
 
 #endif /* GAMEENGINE_H */
