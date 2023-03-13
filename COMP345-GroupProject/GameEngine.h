@@ -25,25 +25,32 @@ using std::string;
 class GameEngine {
     public:
         GameEngine();
-        string command;
-        enum GameState {
-            loadmap, 
-            validatemap, 
-            addplayer, 
-            assigncountries, 
-            issueorder, 
-            endissueorders, 
-            exeorder, 
-            endexeorders, 
-            win,
-            end,
-            play,
-            gamestart
+        std::string command;
+        enum GameCommands {
+            LOADMAP, 
+            VALIDATEMAP, 
+            ADDPLAYER, 
+            GAMESTART,
+            REPLAY,
+            QUIT,
+            ASSIGNCOUNTRIES, 
+            ISSUEORDER, 
+            ENDISSUEORDERS, 
+            EXEORDER, 
+            ENDEXEORDERS
+        };
+        enum GameStates {
+            START,
+            MAPLOADED, 
+            MAPVALIDATED,
+            PLAYERSADDED,
+            WIN
         };
         void Run ();
         void Play();
-        void Shutdown() { isRunning = false; }
+        void ExitProgram() { isRunning = false; }
         ~GameEngine();
+        
     private:
         // Private Data Members
         bool isRunning;
@@ -51,13 +58,13 @@ class GameEngine {
         // Functions for [STARTUP] of Game        
         void startUpPhase();
         void mapLoaded();
-        void mapValidated();
+        void MapValidated(std::string command);
         void playersAdded();
 
         // Functions for [PLAY] of Game
         void assignReinforcement();
         void issueOrders();
-        void executeOrderes();
+        void executeOrders();
         void Win();
 
 };
