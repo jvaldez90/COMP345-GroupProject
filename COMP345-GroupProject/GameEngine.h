@@ -53,7 +53,10 @@ class GameEngine {
         
     private:
         // Private Data Members
+        int playerCounter;
         bool isRunning;
+        
+        void InvalidCommand();
 
         // Functions for [START] of Game        
         void startUpPhase();
