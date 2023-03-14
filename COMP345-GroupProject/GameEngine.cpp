@@ -18,13 +18,11 @@
 #include <iostream>
 #include <string>
 #include "GameEngine.h"
-// #include "Card.h"
-// #include "Map.h"
-// #include "Orders.h"
-// #include "Player.h"
+#include "Player.h"
 
 // SWITCH CASES FOR ENUMERATIONS
 // Reference: https://en.cppreference.com/w/cpp/language/enum
+
 //      SWTICH CASES FOR GAME COMMANDS ENUMERATIONS
 std::ostream& operator<<(std::ostream& cout, GameEngine::GameCommands gc){
     switch(gc){
@@ -34,7 +32,6 @@ std::ostream& operator<<(std::ostream& cout, GameEngine::GameCommands gc){
         case GameEngine::GAMESTART: cout << "gamestart";     break;
         case GameEngine::REPLAY: cout << "replay";           break;
         case GameEngine::QUIT: cout << "quit";               break;
-        case GameEngine::ASSIGNCOUNTRIES: cout << "assigncountries";    break;
         case GameEngine::ISSUEORDER: cout << "issueorder";   break;
         case GameEngine::ENDISSUEORDERS: cout << "endissueorders";      break;
         case GameEngine::EXEORDER: cout << "exeorder";       break;
@@ -50,6 +47,7 @@ switch(gs){
     case GameEngine::MAPLOADED: cout << "maploaded";        break;
     case GameEngine::MAPVALIDATED: cout << "mapvalidate";   break;
     case GameEngine::PLAYERSADDED: cout << "playersadded";  break;
+    case GameEngine::ASSIGNREINFORCEMENT: cout << "assignreinforcement";    break;
     case GameEngine::WIN: cout << "win";                    break;
     default: cout << "Invalid command.";                    break;
 }
@@ -75,81 +73,136 @@ void GameEngine::startUpPhase(){
     std::cin >> command;
 
     // GAME STARTUP
-    // While command is are valid GameCommands and GameStates
-    do {
+    // While commands are valid GameCommands and GameStates
+    do { // START STATE
         if (command == "start") {
             std::cout << "\t" << START << " command entered." << std::endl;
             std::cout << "\tCurrently in " << START << " state." << std::endl;
-        }
-        std::cout << "Enter command loadmap: "<< std::endl;
-        std::cin >> command;
-
-        if (command == "loadmap"){
+            std::cout << "Enter command loadmap: "<< std::endl;
+            std::cin >> command;
+        } 
+        // MAP LOADED STATE
+        while (command == "loadmap"){
             std::cout << "\t" << LOADMAP << " command entered." << std::endl;
             std::cout << "\tCurrently in " << MAPLOADED << " state." << std::endl;
 
             GameEngine::mapLoaded();
+
+            std::cout << "Enter command validatemap\n\t" 
+                      << "if done loading map\n\t"
+                      << "else enter command loadmap: " << std::endl;
+            std::cin >> command;
         }
-        std::cout << "Enter command validatemap: "<< std::endl;
-        std::cin >> command;
+        // MAP VALIDATED STATE
         if (command == "validatemap"){
             std::cout << "\t" << VALIDATEMAP << " command entered." << std::endl;
             std::cout << "\tCurrently in " << MAPVALIDATED << " state." << std::endl;
+
+
+            std::cout << "Enter command addplayer: "<< std::endl;
+            std::cin >> command;
         }
-        std::cout << "Enter command addplayer: "<< std::endl;
-        std::cin >> command;
-        if (command == "addplyer"){
+        // ADD PLAYER STATE
+        while (command == "addplayer"){
             std::cout << "\t" << ADDPLAYER << " command entered." << std::endl;
             std::cout << "\tCurrently in " << PLAYERSADDED << " state. " << std::endl;
 
             GameEngine::playersAdded();
-        }
-        command = "gamestart";
 
+            std::cout << "Enter command gamestart\n\t" 
+                      << "if done adding players\n\t"
+                      << "else enter command addplayer: " << std::endl;
+            std::cin >> command;
+        }
     } while (command == "start" || command == "loadmap" || command == "validatemap" || command == "addplayer");
     
     // assigncountries command
 }
 void GameEngine::Play(){
     // While-loop
+    std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state." << std::endl;
     GameEngine::assignReinforcement();
-    {
+    std::cout << "Setting command to issueorder" << std::endl;
+    command = "issueorder";
+    do{
         // Loop issueorder command
-        GameEngine::issueOrders();
+        while (command == "issueorder"){
+            std::cout << "\tCurrently in " << ISSUEORDER << "s state." << std::endl;
+            
+            GameEngine::issueOrders();
+
+            std::cout << "Enter command endissueorders\n\t" 
+                      << "if done issuing orders\n\t"
+                      << "else enter command issueorder: " << std::endl;
+            std::cin >> command;
+            if(command == "issueorder") {
+                std::cout << "\t" << ISSUEORDER << " command entered." << std::endl;
+            }
+        }
         // endissueorders command to end loop
+        command = "exeorder";
 
         // Loop exeorder command
-        GameEngine::executeOrders();
-        // endexeorders command to end loop
+        while (command == "exeorder"){
+            std::cout << "\tCurrently in " << EXEORDER << "s state." << std::endl;
 
-        // win command to end loop
-    }
+            GameEngine::executeOrders();
+
+            std:: cout << "Enter command endexeorders or win\n\t"
+                       << "if done executing orders\n\t"
+                       << "else enter command exeorder: " << std::endl;
+            std::cin >> command;
+            if (command == "exeorder"){
+                std::cout << EXEORDER << " command entered." << std::endl;
+            } else if (command == "win"){
+                std::cout << WIN << " command entered." << std::endl;
+            }
+        }
+        // endexeorders command to end loop
+        if(command == "endexeorders"){
+            std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state." << std::endl;
+            GameEngine::assignReinforcement();
+            command = "issueorder";
+        }
+        else if (command == "win"){
+            // win command to end loop
+             std::cout << "\tCurrently in " << WIN << " state." << std::endl;
+            GameEngine::Win();
+            std:: cout << "Enter command replay\n\t"
+                       << "if to play game again\n\t"
+                       << "else enter command quit: " << std::endl;
+            std::cin >> command;
+        }
+    }while(
+        command == "issueorder" ||
+        command == "endissueorders" ||
+        command == "exeorder" ||
+        command == "endexeorders" ||
+        command == "win"
+        );
     
-    GameEngine::Win();
+    if (command == "replay"){
+        GameEngine::startUpPhase();
+    }else if (command == "quit"){
+        GameEngine::ExitProgram();
+    }
 }
 void GameEngine::Win(){
     std::cout << std::endl;
     std::cout << "GameEngine::Win()" << std::endl;
     std::cout << "============================" << std::endl;
-    // if play command
-    // GameEngine::startUpPhase();
-    // else end command
-    std::cout << std::endl;
-    std::cout << "GameEngine::ExitProgram()" << std::endl;
-    std::cout << "============================" << std::endl;
-    GameEngine::ExitProgram();
 }
 void GameEngine::mapLoaded(){
     std::cout << std::endl;
     std::cout << "GameEngine::mapLoaded()" << std::endl;
     std::cout << "============================" << std::endl;
     
-    std::cout << "Enter a map file name: ";
-    std::cin >> command;
+    // std::cout << "Enter a map file name: ";
+    // std::cin >> command;
     // MapLoader map;
     // map.load(command);
 
-    GameEngine::MapValidated(command);
+    // GameEngine::MapValidated(command);
 }
 void GameEngine::MapValidated(std::string command){
     std::cout << std::endl;

@@ -33,7 +33,6 @@ class GameEngine {
             GAMESTART,
             REPLAY,
             QUIT,
-            ASSIGNCOUNTRIES, 
             ISSUEORDER, 
             ENDISSUEORDERS, 
             EXEORDER, 
@@ -44,6 +43,7 @@ class GameEngine {
             MAPLOADED, 
             MAPVALIDATED,
             PLAYERSADDED,
+            ASSIGNREINFORCEMENT,
             WIN
         };
         void Run ();
@@ -55,7 +55,7 @@ class GameEngine {
         // Private Data Members
         bool isRunning;
 
-        // Functions for [STARTUP] of Game        
+        // Functions for [START] of Game        
         void startUpPhase();
         void mapLoaded();
         void MapValidated(std::string command);
