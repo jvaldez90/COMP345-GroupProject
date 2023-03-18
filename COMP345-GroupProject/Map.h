@@ -19,6 +19,7 @@ private:
 public:
     Territory(int id, const string& name, int continentId, int x, int y);//Constructor
     Territory();//Default constructor
+    Territory(const string& name);
     Territory(const Territory& territory); // Copy constructor
     int getId() const;
     int getContinentId() const;
@@ -46,7 +47,9 @@ private:
     vector<Territory*> territories;
     int numberOfTerritories;
 public:
+    Continent();
     Continent(int id, const string& name, const string& color);// constructor
+    Continent(const string& name);
     Continent(const Continent& continent);//Copy constructor
     int getId() const;
     const string& getName() const;
@@ -57,7 +60,6 @@ public:
     const vector<Territory*>& getTerritories() const;
     friend std::ostream& operator << (std::ostream& out, const Continent* continent);// Stream insertion operator
     Continent& operator=(const Continent &continent);    // Assignment operator
-    
 };
 
 class Map {
@@ -66,15 +68,18 @@ private:
     vector<Territory*> territories;
     string name;
 public:
+    Map();
     Map(string name);//Contructor
     Map(const Map& map); // Copy constructor
     void addTerritory(Territory* territory);
     void addContinent(Continent* continent);
+    bool map_connected_graph();
     void dfs(Territory* territory, bool visited[], int& number_of_visited_territories);
     Territory* getTerritoryById(int TerritoryId);
     Continent* getContinentById(int continentId);
-    bool validate(Map* map);
-    bool map_is_connected();
+    vector<Territory*> getTerritories();
+    vector<Continent*>getContinents();
+    bool validate();
     bool territory_is_unique();
     bool continents_is_connected_subgraph();
     const string& getName() const;
@@ -83,8 +88,12 @@ public:
 };
 
 class MapLoader {
+private :
+    Map* map;
 public:
     Map*  load(const string &filename);
     MapLoader();
+    void parseContinent(const string& filename);
+    void parseCountries(const string& filename);
 };
 #pragma once

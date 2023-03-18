@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 class player;
@@ -23,6 +24,14 @@ Territory::Territory(int id, const string& name, int continentId, int x,int y)
 Territory::Territory() {
     id = 0;
     name ="";
+    continentId = 0;
+    numberOfArmies = 0;
+    x = 0;
+    y = 0;
+}
+Territory::Territory(const string& name) :name(name)
+{
+    id = 0;
     continentId = 0;
     numberOfArmies = 0;
     x = 0;
@@ -128,9 +137,18 @@ Territory& Territory::operator=(const Territory& other) {
     return *this;
 }
 
+std::ostream& operator<<(std::ostream& out, const Territory* territory) {
+    out << "Country Id: " << territory->getId() << " ";
+    out << "Name: " << territory->getName() << " ";
+    out << "Continent Id: " << territory->getContinentId() << " ";
+    out << "X: " << territory->getX() << " ";
+    out << "Y: " << territory->getY() << " ";
+    return out;
+}
 
-
-
+Continent::Continent()
+{
+}
 /**
  * Constructor of Continent class
  * @param id Id of the continent
@@ -140,9 +158,11 @@ Territory& Territory::operator=(const Territory& other) {
 Continent::Continent(int id, const string& name, const string& color):id(id), name(name), color(color) {
     numberOfTerritories = 0;
 }
-    
-
-
+Continent::Continent(const string& name) :name(name)
+{
+    id = 0;
+    numberOfTerritories = 0;
+}
 /**
  * Copy constructor of the Continent class
  */
@@ -202,9 +222,14 @@ Continent& Continent::operator=(const Continent& other) {
 * Stream insertion operator for continent
 */
 std::ostream& operator<<(std::ostream& out, const Continent* continent) {
-    out << "Continent: " << continent->getName();
-    out << "Color: " << continent->getColor();
+    out << "Id: " << continent->getId() << " ";
+    out << "Continent: " << continent->getName()<< " ";
+    out << "Color: " << continent->getColor() << " ";
     return out;
+}
+
+Map::Map()
+{
 }
 
 Map::Map(string name) : name(name) {
@@ -225,11 +250,19 @@ void Map::addContinent(Continent* continent) {
     continents.__emplace_back(continent);
 }
 
+vector<Territory*> Map::getTerritories()
+{
+    return territories;
+}
 
 Continent* Map::getContinentById(int continentId) {
     return continents[continentId-1];
 }
 
+vector<Continent*> Map::getContinents() {
+
+    return continents;
+}
 Territory* Map::getTerritoryById(int territoryId) {
     return territories[territoryId - 1];
 }
@@ -276,7 +309,7 @@ void Map::dfs(Territory* territory, bool visited[], int& number_of_visited_terri
     }
 }
 
-bool Map::map_is_connected() {
+bool Map::map_connected_graph() {
 
     bool connected = false;
     const int number_of_territories = territories.size();
@@ -316,28 +349,28 @@ Map& Map::operator=(const Map& other) {
     return *this;
 }
 
-bool Map::validate(Map* map){
+bool Map::validate(){
 
-    if (map->map_is_connected()) {
+    if (map_connected_graph()) {
         std::cout << "The map is a connected graph." << std::endl;
     }
     else {
         throw std::invalid_argument("the map is not a connected graph.");
     }
-    if (map->continents_is_connected_subgraph()) {
+    if (continents_is_connected_subgraph()) {
         std::cout << "Continents are connected subgraphs." << std::endl;
     }
     else {
         throw std::invalid_argument("Continents are not connected subgraphs.");
     }
-    if (map->territory_is_unique()) {
+    if (territory_is_unique()) {
         std::cout << "Each country belongs to one and only one continent." << std::endl;
     }
     else {
         throw std::invalid_argument("each country is not unique");
     }
 
-    if (map_is_connected() && continents_is_connected_subgraph() && territory_is_unique()) {
+    if (map_connected_graph() && continents_is_connected_subgraph() && territory_is_unique()){
         std::cout << "The map is valid" << std::endl;
         return true;
     }
@@ -349,22 +382,69 @@ bool Map::validate(Map* map){
 
 
 
-MapLoader::MapLoader() {};
+MapLoader::MapLoader() {
+    this->map = new Map();
+};
 
+void MapLoader::parseContinent(const string& filename) {
+    ifstream file(filename);
+    file.open("../" + filename);
+    int index = 0;
+    string endLine;
+    while (getline(file, endLine)) {
+        if (endLine.find("[continents]") != string::npos) {
+            break;
+        }
+    }
+    // read the line after the keyword
+    while (getline(file, endLine)) {
+        if (endLine.empty()) {
+            break;
+        }
+        index++;
+        stringstream ss(endLine);
+        string name;
+        string color;
+        int x;
+        ss >> name >> x >> color;
+        map->addContinent(new Continent(index,name,color)); 
+    }
+    file.close();
+}
+
+void MapLoader::parseCountries(const string& filename) {
+    ifstream file(filename);
+    file.open("../" + filename);
+    int idTerritory = 0;
+    string endLine;
+    while (getline(file, endLine)) {
+        if (endLine.find("[countries]") != string::npos) {
+            break;
+        }
+    }
+    // read the line after the keyword
+    while (getline(file, endLine)) {
+        
+        if (endLine.empty()) {
+            break;
+        }
+        idTerritory++;
+        //system("PAUSE");
+        stringstream ss(endLine);
+        int iteration;
+        string name;
+        int idContinent, x, y;
+        ss >> iteration>> name >> idContinent >> x >> y;
+        map->addTerritory(new Territory(idTerritory,name, idContinent,x,y));
+    }
+    file.close();
+}
 Map* MapLoader::load(const string& filename) {
-    
-    Map* map = new Map(filename);
     ifstream file(filename);
     file.open("../" + filename);
     string endLine;
-    while (std::getline(file, endLine)) {
-
-        if (endLine.empty() || endLine.front() ==';') {
-            continue;
-        }
-        cout << endLine<<endl;
-    }
-    file.close();
+    parseContinent(filename);
+    parseCountries(filename);
     return map;
 }
 
