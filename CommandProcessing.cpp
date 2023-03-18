@@ -1,69 +1,52 @@
-#include "CommandProcessing.h"
+#pragma once
 
-#include <iostream>
+#include <string>
 #include <vector>
 #include <fstream>
 using namespace std;
 
-std::string CommandProcessor::readCommand() {
-    string input;
-    cout << "Enter a command: ";
-    cin >> input;
-    saveCommand(input);
-    return input;
-}
+class Command {
+private:
+    std::string commandString;
+    vector<string> effectString;
+    string name;
 
-void CommandProcessor::saveCommand(string name) {
-    Command cmd;
-    cmd.command = name;
-    commands.push_back(cmd);
-}
+public:
+    void outputCommand(const Command& cmd);
+    string getName();
+    Command(const std::string& name);
+    std::string getCommandString() const;
+    void saveEffect(const std::string& effStr);
+    std::string getEffectString() const;
+};
 
-//void CommandProcessor::executeCommand() {
-//    Command cmd = getCommand();
-//    // Execute command
-//    cmd.effect = "Command executed successfully.";
-//}
+class CommandProcessor {
+private:
+    std::vector<Command> commands;
 
-// TODO: Implement the actual validate method following the valid commands list
-void CommandProcessor::validate() {
-    Command cmd = getCommand();
-    // Validate command
+    std::string readCommand();
+    void saveCommand(const std::string& cmdStr);
 
+public:
+    std::string getName(const Command& cmd);
+    std::vector<std::string> getEffects(const Command& cmd);
+    void outputCommand(const Command& cmd);
+    CommandProcessor();
+    void validate(Command cmd);
+    Command getCommand();
+};
 
-    cmd.effect = "Command is valid.";
-}
+class FileCommandProcessorAdapter {
+private:
+    std::vector<Command> commands;
+    std::string filename;
+    std::ifstream inputFileStream;
 
-Command CommandProcessor::getCommand() {
-    if (commands.empty()) {
-        Command cmd;
-        cmd.command = "";
-        cmd.effect = "";
-        cout << "Commands list is empty" << endl;
-        return cmd;
-    }
-    Command cmd = commands.front();
-    commands.erase(commands.begin());
-    return cmd;
-}
+    std::string readCommandFromFile();
+    void saveCommand(const std::string& cmdStr);
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(string filename) {
-    file.open(filename);
-    eof = false;
-}
-
-std::string FileCommandProcessorAdapter::readCommand() {
-    if (!eof && commands.empty()) {
-        readNextCommand();
-    }
-    return CommandProcessor::readCommand();
-}
-
-void FileCommandProcessorAdapter::readNextCommand() {
-    std::string input;
-    if (std::getline(file, input)) {
-        saveCommand(input);
-    } else {
-        eof = true;
-    }
-}
+public:
+    FileCommandProcessorAdapter(const std::string& filename);
+    void validate();
+    Command getCommand();
+};
