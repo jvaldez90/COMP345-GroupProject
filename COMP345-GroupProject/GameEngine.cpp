@@ -7,7 +7,7 @@
  * Professor: Amin Ranj Bar
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
- *                ASSINGMENT 2 PART 2: GAME ENGINE
+ *                ASSINGMENT 2 PART 2: GAME STARTUP PHASE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -65,24 +65,29 @@ void GameEngine::Run(){
             GameEngine::Play();
         }
 }
+// startUpPhase()
 void GameEngine::startUpPhase(){
     GameEngine::playerCounter = 0;
     // GAME STARTUP
     // While commands are valid GameCommands and GameStates
-    while (command != "gamestart"){    
+    while (command != "gamestart"){ 
+        std::cout << std::endl;
+        std::cout << "GameEngine::startUpPhase()" << std::endl;
+        std::cout << "============================" << std::endl;
+        std::cout << "Enter command start: ";
         do { // START STATE
-                std::cout << std::endl;
-                std::cout << "GameEngine::startUpPhase()" << std::endl;
-                std::cout << "============================" << std::endl;
-                std::cout << "Enter command start: ";
-                std::cin >> command;
-                
-            if (command == "start") {
+            std::cin >> command;
+            
+            while (command == "start") {
                 std::cout << "\t" << START << " command entered." << std::endl;
                 std::cout << "\tCurrently in " << START << " state." << std::endl;
                 std::cout << "Enter command loadmap: "<< std::endl;
                 std::cin >> command;
-            } 
+            }
+            if (command != "start" &&  command != "loadmap"){
+                GameEngine::InvalidCommand();
+            }
+
             // MAP LOADED STATE
             while (command == "loadmap"){
                 std::cout << "\t" << LOADMAP << " command entered." << std::endl;
@@ -91,21 +96,25 @@ void GameEngine::startUpPhase(){
                 GameEngine::mapLoaded();
 
                 std::cout << "Enter command validatemap\n\t" 
-                        << "if done loading map\n\t"
-                        << "else enter command loadmap: " << std::endl;
+                          << "if done loading map\n\t"
+                          << "else enter command loadmap: " << std::endl;
                 std::cin >> command;
-                
+
+                if (command != "loadmap" && command != "validatemap"){
+                    GameEngine::InvalidCommand();
+                }
             }
             // MAP VALIDATED STATE
             if (command == "validatemap"){
                 std::cout << "\t" << VALIDATEMAP << " command entered." << std::endl;
                 std::cout << "\tCurrently in " << MAPVALIDATED << " state." << std::endl;
 
-
                 std::cout << "Enter command addplayer: "<< std::endl;
                 std::cin >> command;
+
                 if (command != "addplayer"){
                     GameEngine::InvalidCommand();
+                    command = "validatemap";
                 }
             }
             // ADD PLAYER STATE
@@ -114,45 +123,49 @@ void GameEngine::startUpPhase(){
                 std::cout << "\tCurrently in " << PLAYERSADDED << " state. " << std::endl;
                 
                 if (GameEngine::playerCounter <= 1){
-                    std::cout << "\n2 - 6 Players are nedded to start the game." << std::endl;
-                    std::cout << "Adding another player." << std::endl;
-                    
+                    std::cout << "\nGAME REQUIREMENTS: \n\t"
+                              << "2 - 6 Players are nedded to start the game.\n\t" 
+                              << "Adding 2 players." << std::endl;
                     GameEngine::playersAdded();
-                    continue;
-                    
-                }
-                if (GameEngine::playerCounter > 1 && GameEngine::playerCounter < 7){
                     GameEngine::playersAdded();
                     
-                }
-                if (GameEngine::playerCounter > 6){
+                } else if (GameEngine::playerCounter > 6){
+                    std::cout << "!!! WARNING !!!" << std::endl;
                     std::cout << "Cannot add any more players" << std::endl;
                     std::cout << "Setting command to gamestart" << std::endl;
                     command = "gamestart";
                     break;
+
+                } else {
+                    GameEngine::playersAdded();
                 }
-
-                std::cout << "Enter command gamestart\n\t" 
-                        << "if done adding players\n\t"
-                        << "else enter command addplayer: " << std::endl;
+                std::cout << std:: endl
+                          << "Enter command gamestart\n\t" 
+                          << "if done adding players\n\t"
+                          << "else enter command addplayer: " << std::endl;
                 std::cin >> command;
-
                 
+                if (command != "addplayer" && command != "gamestart"){
+                    GameEngine::InvalidCommand();
+                }
+     
             }
-        } while (command == "start" || command == "loadmap" || command == "validatemap" || command == "addplayer");
-        // If invalid commands entered retart game
-        if (command != "gamestart"){
-            GameEngine::InvalidCommand();
-        }
+        } while(command != "gamestart");
     }
 }
+// Play()
 void GameEngine::Play(){
-    std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state." << std::endl;
-    GameEngine::assignReinforcement();
+    std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state.\n" << std::endl;
 
-    std::cout << "Determining the order of playof the players in the game." << std::endl;
+    std::cout << "Determining the order of play of the players in the game." << std::endl;
     // TODO Call to ___? method in Player Class ??
+    
+    srand(time(NULL));
+    int randomizePlayOrder = rand() * GameEngine::playerCounter;
 
+    
+
+    GameEngine::assignReinforcement();
     std::cout << "Giving 50 initial armies to the players, " 
               << "which are placed in their respective reinforcement pool" << std::endl;
     // TODO Call to method in Player Class??
@@ -213,12 +226,9 @@ void GameEngine::Play(){
             std::cin >> command;
         }
     }while(
-        command == "issueorder" ||
-        command == "endissueorders" ||
-        command == "exeorder" ||
-        command == "endexeorders" ||
-        command == "win"
-        );
+        command == "issueorder" || command == "endissueorders" || command == "exeorder" ||
+        command == "endexeorders" || command == "win");
+    
     if (command == "replay"){          // Return to START state
         GameEngine::startUpPhase();
     }else if (command == "quit"){
@@ -232,11 +242,13 @@ void GameEngine::Play(){
             GameEngine::InvalidCommand(); 
     }
 }
+// Win()
 void GameEngine::Win(){
     std::cout << std::endl;
     std::cout << "GameEngine::Win()" << std::endl;
     std::cout << "============================" << std::endl;
 }
+// mapLoaded()
 void GameEngine::mapLoaded(){
     std::cout << std::endl;
     std::cout << "GameEngine::mapLoaded()" << std::endl;
@@ -248,46 +260,65 @@ void GameEngine::mapLoaded(){
     // map.load(command);
 
     // TODO To fix
-    std::cout << "To check if map is valid:" << std::endl;
+    std::cout << "Checking if " << command << " is a valid map ..." << std::endl;
     GameEngine::MapValidated(command);
 }
-void GameEngine::MapValidated(std::string command){
+// MapValidated()
+void GameEngine::MapValidated(std::string& command){
     std::cout << std::endl;
     std::cout << "GameEngine::MapValidated()" << std::endl;
     std::cout << "============================" << std::endl;
     
     // TODO To fix
-    // Map::validate();
-    std::cout << "Map is valid" << std::endl;
+    //  Map::validate(command);
+    std::cout << "Map::validate(command)" << std::endl;
 }
+//playersAdded()
 void GameEngine::playersAdded(){
     std::cout << std::endl;
     std::cout << "GameEngine::playersAdded()" << std::endl;
     std::cout << "============================" << std::endl;
-    std::cout << "Current number of players: " << GameEngine::playerCounter << std::endl;
+    // Player PlayerName(newPlayer);
     
+    std::string newPlayer = "PLAYER_" + std::to_string(GameEngine::playerCounter + 1);
+    std::cout << newPlayer << " has been added." << std::endl;
     GameEngine::playerCounter++;
+    std::cout << "Current number of players: " << GameEngine::playerCounter << std::endl;
 }
+// assignReinforcement()
 void GameEngine::assignReinforcement(){
     std::cout << std::endl;
     std::cout << "GameEngine::assignReinforcement()" << std::endl;
     std::cout << "============================" << std::endl;
 
     std::cout << "Farily distributing all territories to the players" << std::endl;
-    // TODO Call to Map::territories and Player class??
+    // TODO fix
+    // Player::divideTerritories();
+    std::cout << "Player::divideTerritories()" << std::endl;
 }
+//issueOrders()
 void GameEngine::issueOrders(){
     std::cout << std::endl;
     std::cout << "GameEngine::issueOrders()" << std::endl;
     std::cout << "============================" << std::endl;
     // TODO to fix
+    // Order class
+    // Player::issueOrder();
+    std::cout << "Player::issueOrder()" << std::endl;
 }
+//executeOrders()
 void GameEngine::executeOrders(){
     std::cout << std::endl;
     std::cout << "GameEngine::executeOrders()" << std::endl;
     std::cout << "============================" << std::endl;
     // TODO to fix
+    // Order class
+    // Player::toAttack();
+    // Player::toDefend();
+    std::cout << "Player::toAttack()" << std::endl;
+    std::cout << "Player::toDefend()" << std::endl;
 }
+// InvalidCommand()
 void GameEngine::InvalidCommand(){
-    std::cout << "Invalid command entered. Restarting Game." << std::endl;
+    std::cout << "Invalid command entered. Try again." << std::endl;
 }

@@ -7,7 +7,7 @@
  * Professor: Amin Ranj Bar
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
- *                ASSINGMENT 2 PART 2: GAME ENGINE
+ *                ASSINGMENT 2 PART 2: GAME STARTUP PHASE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -61,7 +61,7 @@ class GameEngine {
         // Functions for [START] of Game        
         void startUpPhase();
         void mapLoaded();
-        void MapValidated(std::string command);
+        void MapValidated(std::string& command);
         void playersAdded();
 
         // Functions for [PLAY] of Game

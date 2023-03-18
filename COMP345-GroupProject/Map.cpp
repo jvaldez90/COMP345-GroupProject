@@ -113,7 +113,7 @@ void Territory::deleteArmies(int armies) {
  * @param Add an adjacent territory to the list of territories
  */
 void Territory::addAdjacentTerritory(Territory* territory) {
-    adjacentTerritories.emplace_back(territory); 
+    adjacentTerritories.__emplace_back(territory); 
 
 }
 /**
@@ -185,7 +185,7 @@ const vector<Territory*>& Continent::getTerritories() const {
 }
 
 void Continent::addTerritory(Territory* territory) {
-    territories.emplace_back(territory);
+    territories.__emplace_back(territory);
 }
 
 bool Continent::isEmpty() const {
@@ -218,11 +218,11 @@ Map::Map(const Map& map) : name(map.name) {
     
 }
 void Map::addTerritory(Territory* territory) {
-    territories.emplace_back(territory);
+    territories.__emplace_back(territory);
 }
 
 void Map::addContinent(Continent* continent) {
-    continents.emplace_back(continent);
+    continents.__emplace_back(continent);
 }
 
 
@@ -337,7 +337,7 @@ bool Map::validate(Map* map){
         throw std::invalid_argument("each country is not unique");
     }
 
-    if (map_is_connected && continents_is_connected_subgraph && territory_is_unique) {
+    if (map_is_connected() && continents_is_connected_subgraph() && territory_is_unique()) {
         std::cout << "The map is valid" << std::endl;
         return true;
     }
