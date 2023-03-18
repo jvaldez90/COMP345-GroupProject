@@ -1,39 +1,52 @@
 #pragma once
 
-
 #include <string>
 #include <vector>
 #include <fstream>
 using namespace std;
 
-
 class Command {
+private:
+    std::string commandString;
+    vector<string> effectString;
+    string name;
+
 public:
-    string command;
-    string effect;
+    void outputCommand(const Command& cmd);
+    string getName();
+    Command(const std::string& name);
+    std::string getCommandString() const;
+    void saveEffect(const std::string& effStr);
+    std::string getEffectString() const;
 };
 
 class CommandProcessor {
+private:
+    std::vector<Command> commands;
+
+    std::string readCommand();
+    void saveCommand(const std::string& cmdStr);
 
 public:
+    std::string getName(const Command& cmd);
+    std::vector<std::string> getEffects(const Command& cmd);
+    void outputCommand(const Command& cmd);
+    CommandProcessor();
+    void validate(Command cmd);
     Command getCommand();
-    void saveEffect(string name);
-    void validate();
-    vector<Command> commands;
-
-private:
-    string readCommand();
-    void saveCommand(string name);
 };
 
-class FileCommandProcessorAdapter : public CommandProcessor {
+class FileCommandProcessorAdapter {
 private:
-    ifstream file;
-    bool eof;
+    std::vector<Command> commands;
+    std::string filename;
+    std::ifstream inputFileStream;
 
-    void readNextCommand();
+    std::string readCommandFromFile();
+    void saveCommand(const std::string& cmdStr);
+
 public:
-    FileCommandProcessorAdapter(string filename);
-    string readCommand();
+    FileCommandProcessorAdapter(const std::string& filename);
+    void validate();
+    Command getCommand();
 };
-
