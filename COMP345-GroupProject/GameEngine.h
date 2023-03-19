@@ -29,6 +29,7 @@ class GameEngine {
         GameEngine();
         std::string command;
         vector<Player> *p;
+        Map *playingMap;
         
         enum GameCommands {
             LOADMAP, 
@@ -53,8 +54,15 @@ class GameEngine {
         void Run ();
         void Play();
         void ExitProgram() { isRunning = false; }
-        ~GameEngine();
         
+        // Functions for [PLAY] of Game
+        void assignReinforcement();
+        void issueOrders();
+        void executeOrders();
+        void Win();
+
+        ~GameEngine();
+
     private:
         // Private Data Members
         int playerCounter;
@@ -67,13 +75,6 @@ class GameEngine {
         void mapLoaded();
         void MapValidated(std::string& command);
         void playersAdded();
-
-        // Functions for [PLAY] of Game
-        void assignReinforcement();
-        void issueOrders();
-        void executeOrders();
-        void Win();
-
 };
 
 #endif /* GAMEENGINE_H */

@@ -58,7 +58,13 @@ GameEngine::GameEngine(){       // Default Constructor
     isRunning = true;
 };
 GameEngine::~GameEngine(){      // Destructor
+    delete p;
+    delete playingMap;
+    p = nullptr;
+    playingMap = nullptr;
 };
+
+// MAIN GAME LOOP
 void GameEngine::Run(){
     while(isRunning){
             GameEngine::startUpPhase();
@@ -156,16 +162,32 @@ void GameEngine::startUpPhase(){
 // Play()
 void GameEngine::Play(){
     // PLAY INITIALIZATION
+    std::cout << "\nINITIALIZING GAME SET UP" << std::endl;
+    std::cout << "=============================" << std::endl;
     std::cout << "Farily distributing all territories to the players" << std::endl;
-    // TODO to fix
-    // Player::divideTerritories();
-    std::cout << "Player::divideTerritories()" << std::endl;
+        
+    // Get Number of Territories in Map 
+    int totalNumberTerritories = (playingMap->getTerritories()).size();
+    std::cout << "Total Number of territories in the map: " << totalNumberTerritories << std::endl;
 
-    // Sorting the order in which player will play in which order
-    std::cout << "Determining the order of play of the players in the game." << std::endl;
+    // Then divide total map territories among the number of players
+    int initialTerritories = totalNumberTerritories / GameEngine::playerCounter;
+    std::cout << "Number of Players playing: " << p->size() << std::endl;
+    std::cout << "Each player initially recieves [" << initialTerritories << "] number of territories" <<std::endl;
+
+    // Assign to all players an even amount of territories
+    /*
+    for (int i=0; i < p->size(); i++){
+        // In vector<Player> p assign initial number of territories from playingMap to each player 
+        p(i)->assign(territories)
+    }
+    */ 
+
+    // Sorting the order in which player will take turns
+    std::cout << "\nDetermining the order of play of the players in the game." << std::endl;
     
     vector<int> *generateOrder;
-    vector<Player> *playerOrder; // A Vector in which players get to play in which order.
+    vector<string> *playerOrder; // A Vector<string> indicating which players get to play in which order.
     for (int i = 0; i< GameEngine::playerCounter; i++){
         int randomizegenerateOrder = (rand() % GameEngine::playerCounter + 1);
         if (std::find(generateOrder->begin(), generateOrder->end(), randomizegenerateOrder) != generateOrder->end()){
@@ -178,14 +200,17 @@ void GameEngine::Play(){
     std::cout << "Giving 50 initial armies to the players, " 
               << "which are placed in their respective reinforcement pool" << std::endl;
 
-    for (int i = 0; i < GameEngine::playerCounter; i++){
-        // TODO
+    for (int i = 0; i < p->size(); i++){
+        std::cout << "PLAYER_" << i+1 << " gets 50 intial armies." << std::endl;
+        // p(i)->assign(50 armies)
     }
 
-
+    std::cout << std::endl;
     std::cout << "Letting each player draw 2 initial cards from the deck" << std::endl;
-    //TODO to fix
-    // call to Card class
+    for (int i=0; i< p->size(); i++){
+        std::cout << "PLAYER_" << i+1 << " draws 2 inital cards." << std::endl;
+    }
+
 
     std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state.\n" << std::endl;
     GameEngine::assignReinforcement();
@@ -291,16 +316,14 @@ void GameEngine::MapValidated(std::string& command){
     std::cout << "GameEngine::MapValidated()" << std::endl;
     std::cout << "============================" << std::endl;
     
-    // MapLoader map;
-    // Map *newMap = map.load(command);
-    // bool isValid = newMap->validate();
-    // if (isValid == true){
-    //     std::cout << command << " is a VALID map." << std::endl;
-    // } else {
-    //     std::cout << command << " is NOT a VALID map." << std::endl;
-    // }
-    // delete newMap;
-    // newMap = NULL;
+    MapLoader map;
+    playingMap = map.load(command);
+    bool isValid = playingMap->validate();
+    if (isValid == true){
+        std::cout << command << " is a VALID map." << std::endl;
+    } else {
+        std::cout << command << " is NOT a VALID map." << std::endl;
+    }
     std::cout << "GameEngine::MapValidated() has finished validating map." << std::endl;
 }
 //playersAdded()
@@ -331,7 +354,7 @@ void GameEngine::assignReinforcement(){
 
 // PART 3: ORDERS EXECUTION PHASE
 
-//issueOrders()
+//issueOrders() PHASE
 void GameEngine::issueOrders(){
     std::cout << std::endl;
     std::cout << "GameEngine::issueOrders()" << std::endl;
@@ -341,7 +364,7 @@ void GameEngine::issueOrders(){
     // Player::issueOrder();
     std::cout << "Player::issueOrder()" << std::endl;
 }
-//executeOrders()
+//executeOrders() PHASE
 void GameEngine::executeOrders(){
     std::cout << std::endl;
     std::cout << "GameEngine::executeOrders()" << std::endl;
