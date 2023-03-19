@@ -211,7 +211,7 @@ void GameEngine::Play(){
         std::cout << "PLAYER_" << i+1 << " draws 2 inital cards." << std::endl;
     }
 
-
+    // BEGINNING OF GAME PLAY
     std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state.\n" << std::endl;
     GameEngine::assignReinforcement();
 
@@ -305,6 +305,7 @@ void GameEngine::mapLoaded(){
     std::cout << "Enter a map file name: ";
     std::cin >> command;
 
+    std::cout << std::endl;
     std::cout << "LOADING " << command << std::endl;
     std::cout << "CHECKING if " << command << " is a valid map ..." << std::endl;
 
@@ -324,6 +325,7 @@ void GameEngine::MapValidated(std::string& command){
     } else {
         std::cout << command << " is NOT a VALID map." << std::endl;
     }
+    std::cout << std::endl;
     std::cout << "GameEngine::MapValidated() has finished validating map." << std::endl;
 }
 //playersAdded()
@@ -349,7 +351,9 @@ void GameEngine::assignReinforcement(){
 
     // TODO to fix
     // Player::divideTerritories();
-    std::cout << "Player::divideTerritories()" << std::endl;
+    std::cout << std::endl;
+    std::cout << "\tAdvance(player, armies, target)" << std::endl;
+    std::cout << "\tPlayer::divideTerritories()" << std::endl;
 }
 
 // PART 3: ORDERS EXECUTION PHASE
@@ -362,7 +366,11 @@ void GameEngine::issueOrders(){
     // TODO to fix
     // Order class ??
     // Player::issueOrder();
-    std::cout << "Player::issueOrder()" << std::endl;
+    std::cout << std::endl;
+    std::cout << "\tOrderList()" << std::endl;
+    std::cout << "\tOrder::setDestription()" << std::endl;
+    std::cout << "\tDeploy(player, armies, target)" << std::endl;
+    std::cout << "\tPlayer::issueOrder()" << std::endl;
 }
 //executeOrders() PHASE
 void GameEngine::executeOrders(){
@@ -373,8 +381,10 @@ void GameEngine::executeOrders(){
     // Order class ??
     // Player::toAttack();
     // Player::toDefend();
-    std::cout << "Player::toAttack()" << std::endl;
-    std::cout << "Player::toDefend()" << std::endl;
+    std::cout << std::endl;
+    std::cout << "\tAdvance(player, armies, target)" << std::endl;
+    std::cout << "\tPlayer::toAttack()" << std::endl;
+    std::cout << "\tPlayer::toDefend()" << std::endl;
 }
 // InvalidCommand()
 void GameEngine::InvalidCommand(){
