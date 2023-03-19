@@ -17,8 +17,8 @@
  */
 #include <iostream>
 #include <string>
+#include <vector>
 #include "GameEngine.h"
-// #include "Player.h"
 
 // SWITCH CASES FOR ENUMERATIONS
 // Reference: https://en.cppreference.com/w/cpp/language/enum
@@ -155,23 +155,40 @@ void GameEngine::startUpPhase(){
 }
 // Play()
 void GameEngine::Play(){
-    std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state.\n" << std::endl;
+    // PLAY INITIALIZATION
+    std::cout << "Farily distributing all territories to the players" << std::endl;
+    // TODO to fix
+    // Player::divideTerritories();
+    std::cout << "Player::divideTerritories()" << std::endl;
 
+    // Sorting the order in which player will play in which order
     std::cout << "Determining the order of play of the players in the game." << std::endl;
-    // TODO Call to ___? method in Player Class ??
     
-    srand(time(NULL));
-    int randomizePlayOrder = rand() * GameEngine::playerCounter;
+    vector<int> *generateOrder;
+    vector<Player> *playerOrder; // A Vector in which players get to play in which order.
+    for (int i = 0; i< GameEngine::playerCounter; i++){
+        int randomizegenerateOrder = (rand() % GameEngine::playerCounter + 1);
+        if (std::find(generateOrder->begin(), generateOrder->end(), randomizegenerateOrder) != generateOrder->end()){
+            generateOrder->push_back(randomizegenerateOrder);
+            playerOrder->push_back("Player_"+ std::to_string(randomizegenerateOrder));
 
-    
-
-    GameEngine::assignReinforcement();
+        }
+    }
+    // Assign Initial armies to players
     std::cout << "Giving 50 initial armies to the players, " 
               << "which are placed in their respective reinforcement pool" << std::endl;
-    // TODO Call to method in Player Class??
+
+    for (int i = 0; i < GameEngine::playerCounter; i++){
+        // TODO
+    }
+
 
     std::cout << "Letting each player draw 2 initial cards from the deck" << std::endl;
-    // TODO Call to draw() method in Card class ??
+    //TODO to fix
+    // call to Card class
+
+    std::cout << "\tCurrently in " << ASSIGNREINFORCEMENT << " state.\n" << std::endl;
+    GameEngine::assignReinforcement();
 
     std::cout << "Setting command to issueorder" << std::endl;
     command = "issueorder";
@@ -241,6 +258,12 @@ void GameEngine::Play(){
         command != "replay" || command != "quit"){
             GameEngine::InvalidCommand(); 
     }
+    
+    // GARBAGE COLLECTOR
+    generateOrder = nullptr;
+    playerOrder = nullptr;
+    delete generateOrder;
+    delete playerOrder;
 }
 // Win()
 void GameEngine::Win(){
@@ -256,11 +279,10 @@ void GameEngine::mapLoaded(){
     
     std::cout << "Enter a map file name: ";
     std::cin >> command;
-    // MapLoader map;
-    // map.load(command);
 
-    // TODO To fix
-    std::cout << "Checking if " << command << " is a valid map ..." << std::endl;
+    std::cout << "LOADING " << command << std::endl;
+    std::cout << "CHECKING if " << command << " is a valid map ..." << std::endl;
+
     GameEngine::MapValidated(command);
 }
 // MapValidated()
@@ -269,21 +291,32 @@ void GameEngine::MapValidated(std::string& command){
     std::cout << "GameEngine::MapValidated()" << std::endl;
     std::cout << "============================" << std::endl;
     
-    // TODO To fix
-    //  Map::validate(command);
-    std::cout << "Map::validate(command)" << std::endl;
+    // MapLoader map;
+    // Map *newMap = map.load(command);
+    // bool isValid = newMap->validate();
+    // if (isValid == true){
+    //     std::cout << command << " is a VALID map." << std::endl;
+    // } else {
+    //     std::cout << command << " is NOT a VALID map." << std::endl;
+    // }
+    // delete newMap;
+    // newMap = NULL;
+    std::cout << "GameEngine::MapValidated() has finished validating map." << std::endl;
 }
 //playersAdded()
 void GameEngine::playersAdded(){
     std::cout << std::endl;
     std::cout << "GameEngine::playersAdded()" << std::endl;
     std::cout << "============================" << std::endl;
-    // Player PlayerName(newPlayer);
     
     std::string newPlayer = "PLAYER_" + std::to_string(GameEngine::playerCounter + 1);
     std::cout << newPlayer << " has been added." << std::endl;
     GameEngine::playerCounter++;
     std::cout << "Current number of players: " << GameEngine::playerCounter << std::endl;
+    
+    // Creating an instance object of type Player and push new player into vector<Player>
+    Player *currentPlayer = new Player(newPlayer);
+    p->push_back(*currentPlayer);
 }
 // assignReinforcement()
 void GameEngine::assignReinforcement(){
@@ -291,18 +324,20 @@ void GameEngine::assignReinforcement(){
     std::cout << "GameEngine::assignReinforcement()" << std::endl;
     std::cout << "============================" << std::endl;
 
-    std::cout << "Farily distributing all territories to the players" << std::endl;
-    // TODO fix
+    // TODO to fix
     // Player::divideTerritories();
     std::cout << "Player::divideTerritories()" << std::endl;
 }
+
+// PART 3: ORDERS EXECUTION PHASE
+
 //issueOrders()
 void GameEngine::issueOrders(){
     std::cout << std::endl;
     std::cout << "GameEngine::issueOrders()" << std::endl;
     std::cout << "============================" << std::endl;
     // TODO to fix
-    // Order class
+    // Order class ??
     // Player::issueOrder();
     std::cout << "Player::issueOrder()" << std::endl;
 }
@@ -312,7 +347,7 @@ void GameEngine::executeOrders(){
     std::cout << "GameEngine::executeOrders()" << std::endl;
     std::cout << "============================" << std::endl;
     // TODO to fix
-    // Order class
+    // Order class ??
     // Player::toAttack();
     // Player::toDefend();
     std::cout << "Player::toAttack()" << std::endl;

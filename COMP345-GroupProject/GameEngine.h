@@ -17,6 +17,8 @@
  */
 
 #include <string>
+#include <vector>
+#include "Player.h"
 using std::string;
 
 #ifndef GAMEENGINE_H
@@ -26,6 +28,8 @@ class GameEngine {
     public:
         GameEngine();
         std::string command;
+        vector<Player> *p;
+        
         enum GameCommands {
             LOADMAP, 
             VALIDATEMAP, 
