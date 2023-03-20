@@ -32,6 +32,7 @@ Order::Order(const string& description, const string& effect, Player& player) {
 Order::Order(const Order& order) {
     this->description = new string(*(order.description));
     this->effect = new string(*(order.effect));
+    this->player = order.getPlayer();
 }
 
 //Destructor
@@ -65,7 +66,6 @@ void Order::setEffect(const string& effect) {
 }
 
 void Order::setPlayer(Player& player) {
-    delete this->player;
     this->player = &player;
 }
 
@@ -101,7 +101,7 @@ Deploy::Deploy() : Order("This is a deploy order", "Armies are moved to a target
 Deploy::Deploy(Player& player, int& armies, Territory& target) {
     setPlayer(player);
     this->target = &target;
-    this->armies = &armies;
+    this->armies = armies;
 }
 
 //Copy constructor
@@ -113,17 +113,17 @@ Deploy::Deploy(const Deploy& deploy) : Order(deploy) {
 //Destructor
 Deploy::~Deploy() {
     delete target;
-    delete armies;
 }
 
 //Checks if a Deploy order is valid
 bool Deploy::validate() {
     cout << "Validating Deploy Order..." << endl;
-    if (this->getDescription()->compare("This is a deploy order")) {
-        cout << "This is a valid order" << endl;
+    if (this->target->getTerritoryOwner() == this->getPlayer()) {
+        cout << "Order validated" << endl;
         return true;
     }
     else {
+        cout << "Invalid Order: target does not belong to player" << endl;
         return false;
     }
 }
@@ -131,10 +131,12 @@ bool Deploy::validate() {
 //Executes a Deploy order
 bool Deploy::execute() {
     cout << "Deploy::execute()...." << endl;
-    if (this->validate()) {
-        cout << "Executing Deploy order..." << endl;
-        cout << this->getEffect() << endl;
-        return true;
+    if (this->validate()==true) {
+        cout << "Executing Deploy Order..." << endl;
+        //If order is validated, armies are added to the target territory
+        this->target->addArmies(this->armies);
+        cout << *this->getEffect() << endl;
+        notify();
     }
     else {
         return false;
@@ -170,7 +172,7 @@ Advance::Advance(Player& player, int& armies, Territory& source, Territory& targ
     setPlayer(player);
     this->source = &source;
     this->target = &target;
-    this->armies = &armies;
+    this->armies = armies;
 }
 
 //Copy constructor
@@ -187,28 +189,74 @@ Advance::~Advance() {
 };
 
 //Checks if an Advance order is valid
+//MISSING PROPER IMPLEMENTATION FOR VALIDATE AND EXECUTE
 bool Advance::validate() {
     cout << "Validating Advance Order..." << endl;
-    if (this->getDescription()->compare("This is an Advance order")) {
-        cout << "This is a valid order" << endl;
-        return true;
-    }
-    else {
+    //Verify if source territory belongs to player issuing orders
+    if (this->source->getTerritoryOwner() != this->getPlayer()) {
+        cout << "Invalid order: source does not belong to player" << endl;
         return false;
     }
+    // Verifying if source is adjacent to target
+	for (Territory* adjacent_territory : this->target->get_neighbour_territory()) {
+		if (this->source == adjacent_territory) {
+			cout << "Order validated";
+			return true;
+		}
+	}
+	cout << "Invalid order : Target is not adjacent" << endl;
+	return false;
+    
 }
+
 
 //Executes an Advance order
 bool Advance::execute() {
     cout << "Advance::execute()...." << endl;
-    if (this->validate()) {
+    if (this->validate() == true) {
         cout << "Executing Advance Order..." << endl;
-        cout << this->getEffect() << endl;
-        return true;
+        notify();
+        //Verify if both target and source belong to issuing player
+        if (this->source->getTerritoryOwner() == this->getPlayer() && this->target->getTerritoryOwner() == this->getPlayer()) {
+            cout << "Both territories belong to player issuing orders" << endl;
+            this->target->addArmies(armies); //Add armies to target territory
+            this->source->deleteArmies(armies); //Retrieve armies from source territory
+            this->setEffect("army units are moved from the source to the target territory.");
+            cout << *this->getEffect() << endl;
+        }
+        // Still have to implement actual attack mechanism when territories are not owned by same player
+        else {
+
+            int attack_armies = this->armies;
+            int defend_armies = target->getNumberOfArmies();
+            this->source->deleteArmies(attack_armies);
+            //cout << "Advance::execute() BEFORE BATTLE | Attacking armies: " << attackingArmies << " | Defending armies: " << defendingArmies << endl;
+            for (int i = 0; i < attack_armies; i++) {
+                /* For each army, generate a random value up to 100, if 60 of those values are <= 60,
+                then we have 60% probability */
+                int chanceOfAttack = rand() % 100 + 1;
+                //If possibility is 60%, attack is successful, defending army is killed
+                if (chanceOfAttack <= 60) {
+                    if (defend_armies == 0) {
+                        break;
+                    }
+                    defend_armies--;
+                }
+            }
+            //Same logic here, with 70% probability that defense is successful
+            for (int i = 0; i < defend_armies; i++) {
+                int chanceOfDefence = rand() % 100 + 1;
+                if (chanceOfDefence <= 70) {
+                    if (attack_armies == 0) {
+                        break;
+                    }
+                    attack_armies--;
+                }
+            }
+        }
+
     }
-    else {
-        return false;
-    }
+   
 }
 
 //Defining the assignment operator
@@ -225,6 +273,11 @@ ostream& operator<<(ostream& out, const Advance& advance) {
     out << *advance.getDescription();
     return out;
 }
+
+string Advance::stringToLog() const {
+    return "Advance order has been called";
+}
+
 
 // BLOCKADE CLASS IMPLEMENTATION 
 
@@ -252,11 +305,12 @@ Blockade::~Blockade() {
 //Checks if a Blockade order is valid
 bool Blockade::validate() {
     cout << "Validating Blockade Order..." << endl;
-    if (this->getDescription()->compare("This is a blockade order")) {
-        cout << "This is a valid order" << endl;
+    if (this->target->getTerritoryOwner() == this->getPlayer()) {
+        cout << "Order validated" << endl;
         return true;
     }
     else {
+        cout << "Invalid Order: target does not belong to player" << endl;
         return false;
     }
 }
@@ -264,9 +318,14 @@ bool Blockade::validate() {
 //Executes a Blockade order
 bool Blockade::execute() {
     cout << "Blockade::execute()...." << endl;
+    notify();
     if (this->validate()) {
         cout << "Executing Blockade Order..." << endl;
-        cout << this->getEffect() << endl;
+        //Double the number of armies on target
+        this->target->addArmies(this->target->getNumberOfArmies());
+        this->getPlayer()->removeTerritory(*this->target);
+
+        //Missing implementation for neutral player 
         return true;
     }
     else {
@@ -286,6 +345,11 @@ ostream& operator<<(ostream& out, const Blockade& blockade) {
     out << *blockade.getDescription();
     return out;
 }
+
+string Blockade::stringToLog() const {
+    return "Blockade order has been called";
+}
+
 
 
 // BOMB CLASS IMPLEMENTATION
@@ -314,11 +378,18 @@ Bomb::~Bomb() {
 //Checks if a Bomb order is valid
 bool Bomb::validate() {
     cout << "Validating Bomb Order..." << endl;
-    if (this->getDescription()->compare("This is a bomb order")) {
-        cout << "This is a valid order" << endl;
-        return true;
+    if (this->target->getTerritoryOwner() == this->getPlayer()) {
+        cout << "Invalid order : The target already belongs to the player" << endl;
+        return false;
     }
     else {
+        for (Territory* adjacent_territory : this->target->get_neighbour_territory()) {
+            if (adjacent_territory->getTerritoryOwner() == this->getPlayer()) {
+                cout << "Order validated";
+                return true;
+            }
+        }
+        cout << "Invalid order : Target is not adjacent" << endl;
         return false;
     }
 }
@@ -326,15 +397,10 @@ bool Bomb::validate() {
 //Executes a Bomb order
 bool Bomb::execute() {
     cout << "Blockade::execute()...." << endl;
-    if (this->validate()) {
-        cout << "Executing Bomb Order..." << endl;
-        cout << this->getEffect() << endl;
-        return true;
-
-    }
-    else {
-        return false;
-    }
+    notify();
+    this->target->setNumberOfArmies(this->target->getNumberOfArmies() / 2);
+    this->setEffect("Half of the armies have been removed from the target!");
+    cout << *this->getEffect() << endl;
 
 }
 
@@ -351,6 +417,11 @@ ostream& operator<<(ostream& out, const Bomb& bomb) {
     return out;
 }
 
+string Bomb::stringToLog() const {
+    return "Bomb order has been called";
+}
+
+
 // AIRLIFT CLASS IMPLEMENTATION 
 
 //Default constructor
@@ -365,7 +436,7 @@ Airlift::Airlift(Player& player, int& armies, Territory& source, Territory& targ
     setPlayer(player);
     this->source = &source;
     this->target = &target;
-    this->armies = &armies;
+    this->armies = armies;
 }
 
 //Copy constructor
@@ -384,29 +455,29 @@ Airlift::~Airlift() {
 //Checks if an Airlift order is valid
 bool Airlift::validate() {
     cout << "Validating Airlift Order..." << endl;
-    if (this->getDescription()->compare("This is an airlift order")) {
-        cout << "This is a valid order" << endl;
-        return true;
-    }
-    else {
+    if (this->source->getTerritoryOwner() != this->getPlayer()) {
+        cout << "Invalid order : Source does not belong to player" << endl;
         return false;
     }
+    else if (this->target->getTerritoryOwner() != this->getPlayer()) {
+        cout << "Invalid order : Target does not belong to player" << endl;
+        return false;
+    }
+    cout << "Order validated" << endl;
+    return true;
 }
 
 //Executes an Airlift order
 bool Airlift::execute() {
     cout << "Airlift::execute()..." << endl;
+    notify();
     if (this->validate()) {
         cout << "Executing Airlift Order..." << endl;
-        cout << this->getEffect() << endl;
-        return true;
-
-    }
-    else {
-        return false;
+        this->source->deleteArmies(armies);
+        this->target->addArmies(armies);
+        cout << *this->getEffect() << endl;
     }
 }
-
 //Defining the assignment operator
 Airlift& Airlift::operator=(const Airlift& airlift) {
     Order::operator=(airlift);
@@ -421,6 +492,11 @@ ostream& operator<<(ostream& strm, const Airlift& airlift) {
     strm << *airlift.getDescription();
     return strm;
 }
+
+string Airlift::stringToLog() const {
+    return "Airlift order has been called";
+}
+
 
 // NEGOTIATE CLASS IMPLEMENTATION
 
@@ -447,26 +523,21 @@ Negotiate::~Negotiate() {
 
 //Checks if a Negotiate order is valid
 bool Negotiate::validate() {
-    cout << "Validating Negotiate Order..." << endl;
-    if (this->getDescription()->compare("This is a negotiate order")) {
-        cout << "This is a valid order" << endl;
-        return true;
-    }
-    else {
+    cout << "Negotiate::execute()..." << endl;
+    notify();
+    if (this->enemy == this->getPlayer()) {
+        cout << "Invalid order : Target is the player issuing the order" << endl;
         return false;
     }
+    return true;
 }
 
 //Executes a Negotiate order
 bool Negotiate::execute() {
     cout << "Negotiate::execute()..." << endl;
-    if (this->validate()) {
-        cout << "Executing Negotiate Order..." << endl;
-        cout << this->getEffect() << endl;
-        return true;
-    }
-    else {
-        return false;
+    //Temporary implementation, still have to code the behavior to label the attacks as invalid
+    if (this->validate() == true) {
+        cout << "For the remainder of the turn, any attack between " << this->getPlayer()->getName() << " and " << this->enemy->getName() << " will be invalid" << endl;
     }
 }
 
@@ -481,6 +552,10 @@ Negotiate& Negotiate::operator=(const Negotiate& negotiate) {
 ostream& operator<<(ostream& strm, const Negotiate& negotiate) {
     strm << *negotiate.getDescription();
     return strm;
+}
+
+string Negotiate::stringToLog() const {
+    return "Negotiate order has been called";
 }
 
 //ORDERS LIST CLASS IMPLEMENTATION
@@ -514,7 +589,7 @@ OrderList::~OrderList() {
 void OrderList::move(int startPosition, int endPosition) {
     //Making sure the indexes fit within the range of the list
     if (startPosition < this->orders->size() && endPosition < this->orders->size() && startPosition >= 0 && endPosition >= 0) {
-        //Get the element we want to move
+        //Get the element to be moved
         Order* order_to_move = this->orders->at(startPosition);
         //Remove order from the start index and insert it at the wanted index
         this->orders->erase(this->orders->begin() + startPosition);
@@ -548,6 +623,22 @@ vector<Order*>* OrderList::getOrderList() const {
 //Add an order to the vector by providing an Order
 void OrderList::add(Order* order) {
     this->orders->push_back(order);
+    notify();
+}
+
+OrderList& OrderList::operator=(const OrderList& list) {
+    if (this != &list) {
+        //remove orders from LHS
+        for (int pos = 0; pos < this->orders->size(); pos++) {
+            this->remove(pos);
+        }
+        //add all orders from RHS to LHS
+        for (int i = 0; i < list.getOrderList()->size(); i++) {
+            Order* o = list.orders->at(i);
+            this->add(o);
+        }
+    }
+    return *this;
 }
 
 // Defining the output operator
@@ -556,5 +647,11 @@ ostream & operator<<(ostream & strm, const OrderList& list) {
         strm << *order << endl;
     }
     return strm;
+}
+
+// Method Override from 
+string OrderList::stringToLog() const {
+    vector<Order*>::iterator it = orders->end() - 1;
+    return "Order has been added to the order list with the following effect: " + *(*it)->getEffect() + ". " + *(*it)->getDescription();;
 }
 

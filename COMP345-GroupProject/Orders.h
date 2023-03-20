@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <list>
+#include "Map.h"
+#include "Player.h"
+#include "LoggingObserver.h"
 
 using namespace std;
 
@@ -10,7 +13,7 @@ using namespace std;
 class Player;
 class Territory;
 
-class Order {
+class Order : public Subject, public ILoggable {
 
 private:
 
@@ -34,25 +37,25 @@ public:
     Order(const Order& order);
 
     //Destructor to avoid memory leaks
-    ~Order();
+    virtual ~Order();
 
     //Getter for the description of the order
-    string* getDescription() const ;
+    virtual string* getDescription() const ;
 
     //Getter for the effect of the order
-    string* getEffect() const ;
+    virtual string* getEffect() const ;
 
     //Getter for the player issuing the order
-    Player* getPlayer() const ;
+    virtual Player* getPlayer() const ;
 
     //Setter for the description of the order
-    void setDescription(const string& description);
+    virtual void setDescription(const string& description);
 
     //Setter for the effect of the order
-    void setEffect(const string& effect);
+    virtual void setEffect(const string& effect);
 
     //Setter for the player issuing the order
-    void setPlayer(Player& player);
+    virtual void setPlayer(Player& player);
 
     //Validate method to check if order if valid
     virtual bool validate()=0;
@@ -73,7 +76,7 @@ class Deploy : public Order {
 private:
 
     Territory* target;
-    int* armies;
+    int armies;
 
 public:
 
@@ -102,6 +105,9 @@ public:
     //Operator << definition
     friend ostream& operator<<(std::ostream& strm, const Deploy& deploy);
 
+    // Override stringToLog class from Order
+    string stringToLog() const override;
+
 };
 
 class Advance : public Order {
@@ -109,7 +115,7 @@ class Advance : public Order {
 private:
     Territory* source;
     Territory* target;
-    int* armies;
+    int armies;
 
 public:
     //Default constructor for Deploy order object
@@ -136,6 +142,9 @@ public:
 
     //Operator << definition
     friend ostream& operator<<(std::ostream& strm, const Advance& advance);
+
+    // Override stringToLog class from Order
+    string stringToLog() const override;
 
 };
 
@@ -168,6 +177,9 @@ public:
 
     //Defining the assignment operator
     Blockade& operator=(const Blockade& blockade);
+
+    // Override stringToLog class from Order
+    string stringToLog() const override;
 };
 
 class Airlift : public Order {
@@ -175,7 +187,7 @@ class Airlift : public Order {
 private:
     Territory* source;
     Territory* target;
-    int* armies;
+    int armies;
 
 public:
     //Default constructor
@@ -201,6 +213,9 @@ public:
 
     //Defining the assignment operator
     Airlift& operator=(const Airlift& airlift);
+
+    // Override stringToLog class from Order
+    string stringToLog() const override;
 };
 
 class Bomb : public Order {
@@ -232,6 +247,9 @@ public:
 
     //Defining the assignment operator
     Bomb& operator=(const Bomb& bomb);
+
+    // Override stringToLog class from Order
+    string stringToLog() const override;
 
 };
 
@@ -265,9 +283,12 @@ public:
     //Defining the assignment operator
     Negotiate& operator=(const Negotiate& negociate);
 
+    // Override stringToLog class from Order
+    string stringToLog() const override;
+
 };
 
-class OrderList {
+class OrderList : public Subject, public ILoggable {
 
 private:
     vector<Order*>* orders;
@@ -291,13 +312,17 @@ public:
     //Getter for orders list
     vector<Order*>* getOrderList() const;
 
+    //Defining the assignment operator
+    OrderList& operator=(const OrderList& ordersList);
+
     //Defining the output operator
     friend ostream& operator<<(ostream& out, const OrderList& orderlist);
 
     //Method to add order to the orders list
     void add(Order* order);
 
-
+    // Override from ILoggable
+    string stringToLog() const override;
 };
 
 
