@@ -281,7 +281,7 @@ void GameEngine::Play(){
                        << "if to play game again\n\t"
                        << "else enter command quit: " << std::endl;
             std::cin >> command;
-            if (command != "replay" && command != "win" && command != "quit`"){
+            if (command != "replay" && command != "win" && command != "quit"){
                 GameEngine::InvalidCommand();
             }
         }
