@@ -238,12 +238,15 @@ void GameEngine::Play(){
             GameEngine::issueOrders();
 
             std::cout << std::endl;
-            std::cout << "Enter command endissueorders\n\t" 
+            std::cout << "\nEnter command endissueorders\n\t" 
                       << "if done issuing orders\n\t"
                       << "else enter command issueorder: " << std::endl;
             std::cin >> command;
             if(command == "issueorder") {
                 std::cout << "\t" << ISSUEORDER << " command entered." << std::endl;
+            } else if (command != "issueorder" && command != "endissueorders"){
+                GameEngine::InvalidCommand();
+                command = "issueorder";
             }
         }
         // endissueorders command to end loop
@@ -255,7 +258,7 @@ void GameEngine::Play(){
 
             GameEngine::executeOrders();
 
-            std:: cout << "Enter command endexeorders or win\n\t"
+            std:: cout << "\nEnter command endexeorders or win\n\t"
                        << "if done executing orders\n\t"
                        << "else enter command exeorder: " << std::endl;
             std::cin >> command;
@@ -263,6 +266,9 @@ void GameEngine::Play(){
                 std::cout << EXEORDER << " command entered." << std::endl;
             } else if (command == "win"){
                 std::cout << WIN << " command entered." << std::endl;
+            } else if (command != "endexeorders" && command != "exeorder" && command != "win"){
+                GameEngine:: InvalidCommand();
+                command = "exeorder";
             }
         }
         // endexeorders command to end loop
@@ -282,6 +288,10 @@ void GameEngine::Play(){
                        << "if to play game again\n\t"
                        << "else enter command quit: " << std::endl;
             std::cin >> command;
+            if (command != "replay" && command != "win"){
+                GameEngine::InvalidCommand();
+                command = "win";
+            }
         }
     }while(
         command == "issueorder" || command == "endissueorders" || command == "exeorder" ||
@@ -302,13 +312,6 @@ void GameEngine::Play(){
         delete playerOrder;
 
         GameEngine::ExitProgram();
-    }
-    // When a user enters an invalid command, Restart Game
-    if (
-        command != "issueorder" && command != "endissueorders" && 
-        command != "exeorder" && command != "endexeorders" && command != "win" && 
-        command != "replay" && command != "quit"){
-            GameEngine::InvalidCommand(); 
     }
 }
 // Win()
