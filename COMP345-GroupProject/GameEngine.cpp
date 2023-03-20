@@ -198,13 +198,6 @@ void GameEngine::Play(){
      * -> Push string of PLAYER_[i] into vector<string> playerOrder
      *      -> This vector<string> playrOrder would allow players taking turns in a round robin fashion
      */
-    // for (int i = 0; i < GameEngine::playerCounter; i++){
-    //     int randomizegenerateOrder = (rand() % GameEngine::playerCounter);
-    //     if (std::find(generateOrder->begin(), generateOrder->end(), randomizegenerateOrder) != generateOrder->end()){     
-    //         generateOrder->push_back(randomizegenerateOrder);
-    //         playerOrder->push_back("Player_"+ std::to_string(randomizegenerateOrder));
-    //     }
-    // }
     // Assign Initial armies to players
     std::cout << "Giving 50 initial armies to the players, " 
               << "which are placed in their respective reinforcement pool" << std::endl;
