@@ -267,7 +267,7 @@ void GameEngine::Play(){
             } else if (command == "win"){
                 std::cout << WIN << " command entered." << std::endl;
             } else if (command != "endexeorders" && command != "exeorder" && command != "win"){
-                GameEngine:: InvalidCommand();
+                GameEngine::InvalidCommand();
                 command = "exeorder";
             }
         }
@@ -288,9 +288,8 @@ void GameEngine::Play(){
                        << "if to play game again\n\t"
                        << "else enter command quit: " << std::endl;
             std::cin >> command;
-            if (command != "replay" && command != "win"){
+            if (command != "replay" && command != "win" && command != "quit`"){
                 GameEngine::InvalidCommand();
-                command = "win";
             }
         }
     }while(
