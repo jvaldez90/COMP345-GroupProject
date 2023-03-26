@@ -164,8 +164,8 @@ void GameEngine::Play(){
         
     // Get Number of Territories in Map 
     std::cout << std::endl;
-    std::cout << "int totalNumberTerritories = (playingMap->getTerritories()).size();" << std::endl;
-    int totalNumberTerritories = 100;
+    int totalNumberTerritories = playingMap->getTerritories().size();
+    
     std::cout << "\nTotal Number of territories in the map: " << totalNumberTerritories << std::endl;
 
     // Then divide total map territories among the number of players
@@ -177,7 +177,8 @@ void GameEngine::Play(){
     std::cout << std::endl;
     for (int i=0; i < GameEngine::playerCounter; i++){
         // In vector<Player> p assign initial number of territories from playingMap to each player 
-        std::cout<< "p(" << i<< ")->assign(territories)" << std::endl;
+        //Create lst of territories
+        // call to Player::setTerritories
     }
     std::cout << std::endl;
     // Sorting the order in which player will take turns
@@ -198,6 +199,14 @@ void GameEngine::Play(){
      * -> Push string of PLAYER_[i] into vector<string> playerOrder
      *      -> This vector<string> playrOrder would allow players taking turns in a round robin fashion
      */
+    // Round robin
+    for (int i = 0; i< GameEngine::playerCounter; i++){
+        int randomizegenerateOrder = (rand() % GameEngine::playerCounter + 1);
+        if (std::find(generateOrder->begin(), generateOrder->end(), randomizegenerateOrder) != generateOrder->end()){
+            generateOrder->push_back(randomizegenerateOrder);
+            playerOrder->push_back("Player_"+ std::to_string(randomizegenerateOrder));
+        }
+    }    
     // Assign Initial armies to players
     std::cout << "Giving 50 initial armies to the players, " 
               << "which are placed in their respective reinforcement pool" << std::endl;
@@ -206,7 +215,7 @@ void GameEngine::Play(){
     for (int i = 0; i < GameEngine::playerCounter; i++){
         std::cout << "PLAYER_" << i+1 << " gets 50 intial armies." << std::endl;
         std::cout << "\tFOR-LOOP logic p(i)->assign(50 armies)" << std::endl;
-    }
+    }// Player needed variable int armies
 
     std::cout << std::endl;
     std::cout << "Letting each player draw 2 initial cards from the deck" << std::endl;
@@ -339,17 +348,17 @@ void GameEngine::MapValidated(std::string& command){
     std::cout << "============================" << std::endl;
 
     std::cout << std::endl;
-    std::cout << "MapLoader map;" << std::endl
-            << "playingMap = map.load(command);" << std ::endl
-            << "bool isValid = playingMap->validate();" << std::endl
-            << "if (isValid == true){" << std::endl
-                << command << " is a VALID map." << std::endl
-           << "\t"<< "} else {" << std::endl;
+    MapLoader map;
+    playingMap = map.load(command);
+    bool isValid = playingMap->validate();
+    if (isValid == true){
+        std::cout << command << " is a VALID map." << std::endl
+    } else {
         std::cout << command << " is NOT a VALID map." << std::endl;
-    std::cout << "}" << std::endl;
+    }
 
     std::cout << std::endl;
-    std::cout << "GameEngine::MapValidated() has finished validating map." << std::endl;
+    GameEngine::MapValidated() has finished validating map.
 }
 //playersAdded()
 void GameEngine::playersAdded(){
@@ -365,8 +374,8 @@ void GameEngine::playersAdded(){
     
     // Creating an instance object of type Player and push new player into vector<Player>
     std::cout << std::endl;
-    std::cout << "Player *currentPlayer = new Player(newPlayer);" << std::endl 
-            << "p->push_back(*currentPlayer);" << std::endl;
+    Player *currentPlayer = new Player(newPlayer);
+    p->push_back(*currentPlayer);
 }
 // assignReinforcement()
 void GameEngine::assignReinforcement(){
@@ -391,6 +400,8 @@ void GameEngine::issueOrders(){
     std::cout << std::endl;
     std::cout << "Current PLAYER_ calls: " << std::endl;
     std::cout << "\tPlayer::issueOrder(std::string orderType)" << std::endl;
+    //Round Robins
+    // for loop or while loop
 }
 //executeOrders() PHASE
 void GameEngine::executeOrders(){
@@ -403,6 +414,7 @@ void GameEngine::executeOrders(){
     std::cout << "Current PLAYER_ calls: " << std::endl;
     std::cout << "\tPlayer::toAttack()" << std::endl;
     std::cout << "\tPlayer::toDefend()" << std::endl;
+    //for loop or while loop
 }
 // InvalidCommand()
 void GameEngine::InvalidCommand(){
