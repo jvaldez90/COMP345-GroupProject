@@ -8,6 +8,7 @@
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
  *                ASSINGMENT 2 PART 2: GAME STARTUP PHASE
+ *                ASSIGNMENT 3 PART 2: TOURNAMENT MODE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -44,7 +45,8 @@ class GameEngine {
             ISSUEORDER, 
             ENDISSUEORDERS, 
             EXEORDER, 
-            ENDEXEORDERS
+            ENDEXEORDERS,
+            TOURNAMENT
         };
         enum GameStates {
             START,
@@ -57,6 +59,7 @@ class GameEngine {
         void Run ();
         void Play();
         void ExitProgram() { isRunning = false; }
+        void Tourmanent();
         
         // Functions for [PLAY] of Game
         void assignReinforcement();

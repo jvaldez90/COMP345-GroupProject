@@ -7,7 +7,8 @@
  * Professor: Amin Ranj Bar
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
- *                ASSINGMENT 2 PART 2: GAME STARTUP PHASE
+ *                ASSIGNMENT 2 PART 2: GAME STARTUP PHASE
+ *                ASSIGNMENT 3 PART 2: TOURNAMENT MODE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -36,6 +37,7 @@ std::ostream& operator<<(std::ostream& cout, GameEngine::GameCommands gc){
         case GameEngine::ENDISSUEORDERS: cout << "endissueorders";      break;
         case GameEngine::EXEORDER: cout << "exeorder";       break;
         case GameEngine::ENDEXEORDERS: cout << "endexeorders"; break;
+        case GameEngine::TOURNAMENT: cout << "tournament";   break;
         default: cout << "Invalid command.";                 break;
     }
     return cout;
@@ -58,14 +60,38 @@ GameEngine::GameEngine(){       // Default Constructor
     isRunning = true;
 };
 GameEngine::~GameEngine(){      // Destructor
+    std::cout << "~GameEngine() Destructor" << std::endl;
 };
 
 // MAIN GAME LOOP
 void GameEngine::Run(){
-    while(isRunning){
+    std::cout << std::endl;
+    std::cout << "================" << std::endl;
+    std::cout << "  WARZONE GAME  " << std::endl;
+    std::cout << "================" << std::endl;
+
+    // User selects between PLAY and TOURNAMENT Modes
+    std::cout << std::endl;
+    std::cout << "SELECT A MODE: play | tournament" << std::endl;
+    std::cin >> command;
+
+    if (command == "tourmanent"){
+        std::cout << std::endl;
+        std::cout << TOURNAMENT << " was selected" << std::endl;
+        GameEngine::Tourmanent();
+    } else {
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << "Entering play mode" << std::endl;
+        std::cout << std::endl;
+
+        while(isRunning){
             GameEngine::startUpPhase();
             GameEngine::Play();
         }
+
+    }
+
 }
 // startUpPhase()
 void GameEngine::startUpPhase(){
@@ -185,27 +211,11 @@ void GameEngine::Play(){
     std::cout << "\nDetermining the order of play of the players in the game." << std::endl;
     std::cout << std::endl;
 
-    vector<int> *generateOrder;
-    vector<string> *playerOrder; // A Vector<string> indicating which players get to play in which order.
+    std::vector<string> *playerOrder; // A Vector<string> indicating which players get to play in which order.
 
-    /**
-     * PSEUDOCODE LOGIC
-     * Generate a random number between 1 and MAX number of players
-     * -> Store a randomized number into randomizeGenerateOrder
-     * -> Check if randomized number doesn't already exist in vector<int> generatorOrder
-     *      -> if it doesn't exist, then push randomizeGenearteOrder into vector<int> generatorOrder
-     * 
-     * -> Convert randomized number to string and append to the string PLAYER_
-     * -> Push string of PLAYER_[i] into vector<string> playerOrder
-     *      -> This vector<string> playrOrder would allow players taking turns in a round robin fashion
-     */
     // Round robin
     for (int i = 0; i< GameEngine::playerCounter; i++){
-        int randomizegenerateOrder = (rand() % GameEngine::playerCounter + 1);
-        if (std::find(generateOrder->begin(), generateOrder->end(), randomizegenerateOrder) != generateOrder->end()){
-            generateOrder->push_back(randomizegenerateOrder);
-            playerOrder->push_back("Player_"+ std::to_string(randomizegenerateOrder));
-        }
+            playerOrder->push_back("Player_"+ std::to_string(i));
     }    
     // Assign Initial armies to players
     std::cout << "Giving 50 initial armies to the players, " 
@@ -358,7 +368,7 @@ void GameEngine::MapValidated(std::string& command){
     }
 
     std::cout << std::endl;
-    GameEngine::MapValidated() has finished validating map.
+    std::cout << "GameEngine::MapValidated() has finished validating map." << std::endl;
 }
 //playersAdded()
 void GameEngine::playersAdded(){
@@ -419,4 +429,30 @@ void GameEngine::executeOrders(){
 // InvalidCommand()
 void GameEngine::InvalidCommand(){
     std::cout << "Invalid command entered. Try again." << std::endl;
+}
+
+// TOURNAMENT MODE
+void GameEngine::Tourmanent(){
+    std::cout << std::endl;
+    std::cout << "TOURNAMENT MODE" << std::endl;
+    std::cout << "============================" << std::endl;
+    std::cout << std::endl;
+    /*
+        Allow a user to enter inputs for the following parameters
+        M = List of map files           => LIST
+        P = List of player strategies   => LIST
+        G = number of games             => INT
+        D = number of turns             => INT
+    */
+    /* PSEUDOCODE
+    for (int i = 0; i < M.size(); i++){
+        // Create a map object and validate map file
+        Map M[i];
+        for (int j = 0; j < G; j++){        // FOR-LOOP for tournament games
+            for (int k = 0; k < D; k++){    // FOR-LOOP for number of turns
+                
+            }
+        }
+    }
+    */
 }
