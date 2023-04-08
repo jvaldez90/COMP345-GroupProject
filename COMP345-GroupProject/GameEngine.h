@@ -20,7 +20,6 @@
 #include <string>
 #include <vector>
 #include "Player.h"
-// #include "Map.h"
 using std::string;
 
 #ifndef GAMEENGINE_H
@@ -30,8 +29,9 @@ class GameEngine {
     public:
         GameEngine();
         std::string command;
-        std::vector<std::string> *p;
-        vector<Player*> p;
+        std::vector<Player *> P;
+
+        std::vector<Map *> M;
     
         Map *playingMap;
         
@@ -45,7 +45,8 @@ class GameEngine {
             ISSUEORDER, 
             ENDISSUEORDERS, 
             EXEORDER, 
-            ENDEXEORDERS,
+            ENDEXEORDERS, 
+            PLAY,
             TOURNAMENT
         };
         enum GameStates {
