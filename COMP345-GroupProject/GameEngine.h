@@ -60,7 +60,7 @@ class GameEngine {
         void Run ();
         void Play();
         void ExitProgram() { isRunning = false; }
-        void Tourmanent();
+        void Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G, int D);
         
         // Functions for [PLAY] of Game
         void assignReinforcement();

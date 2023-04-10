@@ -78,33 +78,84 @@ void GameEngine::Run(){
     // Where PLAY is the regular gameplay and TOURMANENT is tourmanent mode
     std::cin >> command;
 
-    if (command == "tourmanent"){               // SETUP FOR TOURNAMENT MODE
+    if (command == "tournament"){               // SETUP FOR TOURNAMENT MODE
         std::cout << std::endl;
         std::cout << TOURNAMENT << " was selected" << std::endl;
-        // PUSH_BACK map files into VECTOR<MAP *>
-        M.push_back("bigeurop.map");
-        M.push_back("europass.map");
-        M.push_back("MiddleEast-Qatar.map");
-        M.push_back("spain.map");
-        M.push_back("swiss.map");
         std::cout << std::endl;
-        std::cout<< "5 Map files have been loaded." << std::endl;
 
-        // PUSH_BACK player strategies into VECTOR<PLAYER *>
-        P.push_back("aggressive");
-        P.push_back("benevolent");
-        P.push_back("neutral");
-        P.push_back("cheater");
+        int number;
+        do {
+            std::cout << "Select the number of maps to be played (1 - 5): ";
+            std::cin >> nunmber;
+            // PUSH_BACK map files into VECTOR<MAP *>
+            if (number == 1) {                      // MAP LEVEL 1
+                M.push_back("bigeurope.map");
+            } else if (number == 2) {               // MAP LEVEL 2
+                M.push_back("europass.map");
+            } else if (number == 3) {               // MAP LEVEL 3
+                M.push_back("MiddleEast-Qatar.map");
+            } else if (number == 4) {               // MAP LEVEL 4
+                M.push_back("spain.map");
+            } else if (number == 5) {               // MAP LEVEL 5
+                M.push_back("swiss.map");
+            } else {
+                std::cout << "Invalid number: Try Again." << std::endl;
+            }
+        } while (number < 0 && number > 5);
+        
+        // Display number of maps the user chose to play
         std::cout << std::endl;
-        std::cout << "4 Players of different strategies have been added." << std::endl;
+        std::cout<< number << " Map files have been loaded." << std::endl;
 
-        std::cout << "Enter the number of games to be played: "<< std::endl;
+        do {
+            std::cout << std::endl;
+            std::cout << "Select the number of player strategies (2 - 4): ";
+            std::cin >> number;
+
+            // PUSH_BACK player strategies into VECTOR<PLAYER *>
+            if (number == 2) {
+                P->playerStrategy.push_back("aggressive");       // Player Strategy 1
+                P->playerStrategy.push_back("benevolent");       // Player Strategy 2
+            } else if (number == 3) {
+                P->playerStrategy.push_back("aggressive");       // Player Strategy 1
+                P->playerStrategy.push_back("benevolent");       // Player Strategy 2
+                P->playerStrategy.push_back("neutral");          // Player Strategy 3
+            } else if (number == 4) {
+                P->playerStrategy.push_back("aggressive");       // Player Strategy 1
+                P->playerStrategy.push_back("benevolent");       // Player Strategy 2
+                P->playerStrategy.push_back("neutral");          // Player Strategy 3
+                P->playerStrategy.push_back("cheater");          // Player Strategy 4
+            } else {
+                std::cout << "Invalid number: Enter another number" << std::endl;
+            }
+        } while(number < 2 && number > 4);
+
+        std::cout << std::endl;
+        std::cout << number << " Players of different strategies have been added." << std::endl;
+
+        // User enters number of GAMES to be played
         int games;
-        std::cin>> games;
-        std::cout << "Enter the number of turns allowed: " << std::endl;
-        int turns;
-        std::cin >> turns;
+        do {
+            std::cout << std::endl;
+            std::cout << "Enter the number of games to be played on each map (1 - 5): "<< std::endl;
+            std::cin>> games;
+            if (games < 1 && games > 5){
+                std::cout << "Invalid number: Try again." << std::endl;
+            }
+        } while (games < 1 && games > 5);
 
+        // User enters number of TURNS in each game
+        int turns;
+        do {
+            std::cout << "Enter the number of turns allowed (10 - 50): " << std::endl;
+            std::cin >> turns;
+            if (turns , 10 && turns > 50){
+                std::cout << "Invalid number: Try again." << std::endl;
+            }
+
+        } while(turns < 10 && turns > 50);
+
+        // TOURNAMENT MODE COMMAND is set
         GameEngine::Tourmanent(M, P, games, turns);
 
     } else {                                // SETUP FOR REGULAR GAMEPLAY
@@ -119,6 +170,7 @@ void GameEngine::Run(){
         }
 
     }
+    // DISPLAY THE END OF GAME IN BOTH MODES
     std::cout << std::endl;
     std::cout << "================" << std::endl;
     std::cout << "    GAMEOVER    " << std:;endl;
@@ -464,7 +516,7 @@ void GameEngine::InvalidCommand(){
 }
 
 // TOURNAMENT MODE
-void GameEngine::Tourmanent(std::vector<Map*> &M, std::vector<Player*> &P, int G, int D){
+void GameEngine::Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G, int D){
     std::cout << std::endl;
     std::cout << "TOURNAMENT MODE" << std::endl;
     std::cout << "============================" << std::endl;
@@ -476,6 +528,19 @@ void GameEngine::Tourmanent(std::vector<Map*> &M, std::vector<Player*> &P, int G
         G = number of games             => INTEGER
         D = number of turns             => INTEGER
     */
+   // INITIALIZE TOURNAMENT STARTUP
+    for (int i = 0; i < P.size(); i++){
+        // Assign each player an intial of 50 armies
+        P[i]->setArmies.push_back(50);
+    }
+    // In a round robin fashion assign territories to each player
+    for (int j = 0; j < M[j]->getTerritories().size(); j++){
+        
+        for (int k = 0; k < P.size(); k++){
+            P[k]->territories.push_back(M[j]->getTerritories().at(j));
+        }
+    }
+
     for (int mapCounter = 0; mapCounter < M.size(); mapCounter++){  // FOR-LOOP for each map loaded
         // Load  map object and validate map file
         GameEngine::MapValidated( M[mapCounter] );
@@ -485,9 +550,22 @@ void GameEngine::Tourmanent(std::vector<Map*> &M, std::vector<Player*> &P, int G
             for (int turnCounter = 0; turnCounter < D; turnCounter++){  // FOR-LOOP for number of turns
 
                 // SETUP OF TOURNAMENT MODE
+                for (int currentPlayer = 0; currentPlayer < P.size(); currentPlayer++){
+                    /*
+                        Each Player gets to call the following functions
+                        GameEngine::assignReinforcements()
+                        GameEngine::issueOrders()
+                        GameEngine::executeOrders()
+                    */
+
+                } /* END of currentPlayer FOR-LOOP */
                 
-            }
-        }
-    }
+            } /* END of turnCounter FOR-LOOP */
+
+         // GameEngine:: Win(); // Display WINNER   
+
+        }/* END of gameCounter FOR-LOOP */
+
+    } /* END of mapCounter FOR-LOOP */
   
 }
