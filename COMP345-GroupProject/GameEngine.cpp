@@ -83,7 +83,7 @@ void GameEngine::Run(){
         std::cout << TOURNAMENT << " was selected" << std::endl;
         std::cout << std::endl;
 
-        int number;
+        int number = 0;
         do {
             std::cout << "Select the number of maps to be played (1 - 5): ";
             std::cin >> nunmber;
@@ -101,11 +101,12 @@ void GameEngine::Run(){
             } else {
                 std::cout << "Invalid number: Try Again." << std::endl;
             }
-        } while (number < 0 && number > 5);
+        } while (number < 1 || number > 5);
         
         // Display number of maps the user chose to play
         std::cout << std::endl;
         std::cout<< number << " Map files have been loaded." << std::endl;
+        number = 0;
 
         do {
             std::cout << std::endl;
@@ -128,7 +129,7 @@ void GameEngine::Run(){
             } else {
                 std::cout << "Invalid number: Enter another number" << std::endl;
             }
-        } while(number < 2 && number > 4);
+        } while(number < 2 || number > 4);
 
         std::cout << std::endl;
         std::cout << number << " Players of different strategies have been added." << std::endl;
@@ -142,18 +143,18 @@ void GameEngine::Run(){
             if (games < 1 && games > 5){
                 std::cout << "Invalid number: Try again." << std::endl;
             }
-        } while (games < 1 && games > 5);
+        } while (games < 1 || games > 5);
 
         // User enters number of TURNS in each game
         int turns;
         do {
             std::cout << "Enter the number of turns allowed (10 - 50): " << std::endl;
             std::cin >> turns;
-            if (turns , 10 && turns > 50){
+            if (turns < 10 || turns > 50){
                 std::cout << "Invalid number: Try again." << std::endl;
             }
 
-        } while(turns < 10 && turns > 50);
+        } while(turns < 10 || turns > 50);
 
         // TOURNAMENT MODE COMMAND is set
         GameEngine::Tourmanent(M, P, games, turns);
@@ -410,13 +411,28 @@ void GameEngine::Play(){
     }
 }
 // Win()
-void GameEngine::Win(){
+void GameEngine::Win(std::vector<Player*> &P){
     std::cout << std::endl;
     std::cout << "GameEngine::Win()" << std::endl;
     std::cout << "============================" << std::endl;
 
+    // Find which Player has the most territories
+    int maxTerritories = 0;
+    int size = 0;
+    for (int counter = 0; counter < P.size(); counter++){
+        size = P[counter]->getTerritories.size();
+        if (size >= maxTerritories){
+            maxTerritories = size;
+        }
+    }
+
+    // The player with the most territories is the winner
     std::cout << std::endl;
-    std::cout << "PLAYER_ wins"<< std::endl;
+    for (int counter = 0; counter < P.size(); counter++){
+        if (P[counter]->getTerritories.size() == maxTerritories){
+            std::cout << P->playerStrategy << " Player wins." << std::endl
+        }
+    }
     std::cout << std::endl;
 }
 // mapLoaded()
@@ -472,43 +488,48 @@ void GameEngine::playersAdded(){
     P->push_back(*currentPlayer);
 }
 // assignReinforcement()
-void GameEngine::assignReinforcement(){
+void GameEngine::assignReinforcement(std::vector<Player*> &P){
 
     std::cout << std::endl;
     std::cout << "GameEngine::assignReinforcement()" << std::endl;
-    std::cout << "============================" << std::endl;
+    std::cout << "=================================" << std::endl;
 
     std::cout << std::endl;
-    std::cout << "Current PLAYER_ calls:" << std::endl;
-    std::cout << "\tPlayer::divideTerritories()" << std::endl;
+    std::cout << "Current PLAYER_ calls: " << std::endl;
+    std::cout << "\t->divideTerritories()" << std::endl;
+    P->divideTerritories();
+
 }
 
 // PART 3: ORDERS EXECUTION PHASE
 
 //issueOrders() PHASE
-void GameEngine::issueOrders(){
+void GameEngine::issueOrders(std::vector<Player*> &P){
     std::cout << std::endl;
     std::cout << "GameEngine::issueOrders()" << std::endl;
     std::cout << "============================" << std::endl;
 
     std::cout << std::endl;
     std::cout << "Current PLAYER_ calls: " << std::endl;
-    std::cout << "\tPlayer::issueOrder(std::string orderType)" << std::endl;
-    //Round Robins
-    // for loop or while loop
+    std::cout << "\t->issueOrder()" << std::endl;
+
+    P->issueOrder(std::string orderType);
+    
 }
 //executeOrders() PHASE
-void GameEngine::executeOrders(){
+void GameEngine::executeOrders(std::vector<Player*> &P){
     std::cout << std::endl;
     std::cout << "GameEngine::executeOrders()" << std::endl;
     std::cout << "============================" << std::endl;
 
-
     std::cout << std::endl;
     std::cout << "Current PLAYER_ calls: " << std::endl;
-    std::cout << "\tPlayer::toAttack()" << std::endl;
-    std::cout << "\tPlayer::toDefend()" << std::endl;
-    //for loop or while loop
+    std::cout << "\t->toAttack()" << std::endl;
+    std::cout << "\t->toDefend()" << std::endl;
+
+    P->toAttack();
+    P->toDefend();
+    
 }
 // InvalidCommand()
 void GameEngine::InvalidCommand(){
@@ -553,16 +574,18 @@ void GameEngine::Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G
                 for (int currentPlayer = 0; currentPlayer < P.size(); currentPlayer++){
                     /*
                         Each Player gets to call the following functions
-                        GameEngine::assignReinforcements()
-                        GameEngine::issueOrders()
-                        GameEngine::executeOrders()
+                        and then the status of each player gets updated
                     */
+                   GameEngine::assignReinforcement(P[currentPlayer]);
+                   GameEngine::issueOrders(P[currentPlayer]);
+                   GameEngine::executeOrders(P[currentPlayer]);
+
 
                 } /* END of currentPlayer FOR-LOOP */
                 
             } /* END of turnCounter FOR-LOOP */
 
-         // GameEngine:: Win(); // Display WINNER   
+         GameEngine:: Win(P); // Display WINNER   
 
         }/* END of gameCounter FOR-LOOP */
 

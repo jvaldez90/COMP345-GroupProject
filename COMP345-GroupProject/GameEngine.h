@@ -63,10 +63,10 @@ class GameEngine {
         void Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G, int D);
         
         // Functions for [PLAY] of Game
-        void assignReinforcement();
-        void issueOrders();
-        void executeOrders();
-        void Win();
+        void assignReinforcement(std::vector<Player*> &P);
+        void issueOrders(std::vector<Player*> &P);
+        void executeOrders(std::vector<Player*> &P);
+        void Win(std::vector<Player*> &P);
 
         ~GameEngine();
 
