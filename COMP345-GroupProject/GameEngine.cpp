@@ -80,7 +80,7 @@ void GameEngine::Run(){
 
     if (command == "tournament"){               // SETUP FOR TOURNAMENT MODE **
         std::cout << std::endl;
-        std::cout << TOURNAMENT << " was selected" << std::endl;
+        std::cout << TOURNAMENT << " mode was selected" << std::endl;
         std::cout << std::endl;
 
         int number = 0;
@@ -156,6 +156,9 @@ void GameEngine::Run(){
             }
         } while (games < 1 || games > 5);
 
+        std::cout << std::endl;
+        std::cout << games << " is the number of games to be played." << std::endl;
+
         // User enters number of TURNS in each game
         int turns;
         do {
@@ -164,8 +167,10 @@ void GameEngine::Run(){
             if (turns < 10 || turns > 50){
                 std::cout << "Invalid number: Try again." << std::endl;
             }
-
         } while(turns < 10 || turns > 50);
+
+        std::cout << std::endl;
+        std::cout << turns << " is the number of turns each player gets in each game." << std::endl;
 
         // TOURNAMENT MODE COMMAND is set **
         GameEngine::Tourmanent(M, P, games, turns);
@@ -498,7 +503,7 @@ void GameEngine::playersAdded(){
     Player *currentPlayer = new Player(newPlayer);
     P->push_back(*currentPlayer);
 }
-// assignReinforcement()
+// assignReinforcement() **
 void GameEngine::assignReinforcement(std::vector<Player*> &P){
 
     std::cout << std::endl;
@@ -507,14 +512,14 @@ void GameEngine::assignReinforcement(std::vector<Player*> &P){
 
     std::cout << std::endl;
     std::cout << "Current PLAYER_ calls: " << std::endl;
-    std::cout << "\t->divideTerritories()" << std::endl;
+    std::cout << "\t->divideTerritories()->getTerritories()" << std::endl;
 
-    // WHILE-LOOP: assign armies among each current Player's territories
-    P->divideTerritories();
+    // Assign armies among each current Player's territories
+    P->divideTerritories()->getTerritories();
 
 }
 
-// PART 3: ORDERS EXECUTION PHASE
+// ASSIGNMENT 2 - PART 3: ORDERS EXECUTION PHASE
 
 //issueOrders() PHASE **
 void GameEngine::issueOrders(std::vector<Player*> &P){
@@ -526,7 +531,7 @@ void GameEngine::issueOrders(std::vector<Player*> &P){
     std::cout << "Current PLAYER_ calls: " << std::endl;
     std::cout << "\t->issueOrder()" << std::endl;
 
-    // WHILE-LOOP: issueOrders until current Player is done
+    // issueOrders until current Player is done
     P->issueOrder(std::string orderType);
     
 }
@@ -541,7 +546,7 @@ void GameEngine::executeOrders(std::vector<Player*> &P){
     std::cout << "\t->toAttack()" << std::endl;
     std::cout << "\t->toDefend()" << std::endl;
 
-    // WHILE-LOOP Attack and Defend until current Player is done
+    // Attack and Defend until current Player is done
     P->toAttack();
     P->toDefend();
     
@@ -604,4 +609,5 @@ void GameEngine::Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G
         }/* END of gameCounter FOR-LOOP */
 
     } /* END of mapCounter FOR-LOOP */
+    GameEngine::ExitProgram();
 }
