@@ -5,7 +5,8 @@
 #include <string>
 using namespace std;
 
-string GameEngine::currentState;
+string GameEngine::currentState("win");
+
 
 Command::Command(string name)
 {
@@ -40,7 +41,7 @@ void CommandProcessor::saveCommand(const string &cmdStr)
     commands.push_back(cmd);
 }
 
-string CommandProcessor::getEffectString(Command &cmd) const
+string Command::getEffectString(Command &cmd) const
 {
     return cmd.effectString;
 }
@@ -62,7 +63,9 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
     }
@@ -72,7 +75,9 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             std::cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
     }
@@ -82,7 +87,9 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             std::cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
     }
@@ -92,7 +99,9 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             std::cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
     }
@@ -102,7 +111,9 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             std::cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
     }
@@ -112,9 +123,15 @@ void CommandProcessor::validate(Command cmd)
         {
             cmd.saveEffect("Command executed successfully.");
             std::cout << "Effect: " << getEffectString(cmd) << std::endl;
-        } else {
+        }
+        else
+        {
             cout << "Wrong state" << endl;
         }
+    }
+    else
+    {
+        cout << "ERROR: Not a valid command." << endl;
     }
 }
 
@@ -138,7 +155,7 @@ void FileCommandProcessorAdapter::processCommands()
         Command cmd(line);
         validate(cmd);
         std::cout << "Command: " << getName(cmd) << std::endl;
-        std::cout << "Effect: " << getEffectString(cmd) << std::endl;
+        // std::cout << "Effect: " << getEffectString(cmd) << std::endl;
     }
     fileStream.close();
 }
