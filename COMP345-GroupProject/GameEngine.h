@@ -8,6 +8,7 @@
  * 
  * GROUP PROJECT: ASSIGNMENT 1 PART 5: GAME ENGINE
  *                ASSINGMENT 2 PART 2: GAME STARTUP PHASE
+ *                ASSIGNMENT 3 PART 2: TOURNAMENT MODE
  * 
  * @author Joy Anne Valdez
  * Student ID: 26339379
@@ -19,7 +20,6 @@
 #include <string>
 #include <vector>
 #include "Player.h"
-// #include "Map.h"
 using std::string;
 
 #ifndef GAMEENGINE_H
@@ -29,9 +29,8 @@ class GameEngine {
     public:
         GameEngine();
         std::string command;
-        std::vector<std::string> *p;
-        vector<Player*> p;
-    
+        std::vector<Player *> P;
+        std::vector<Map *> M;    
         Map *playingMap;
         
         enum GameCommands {
@@ -44,7 +43,9 @@ class GameEngine {
             ISSUEORDER, 
             ENDISSUEORDERS, 
             EXEORDER, 
-            ENDEXEORDERS
+            ENDEXEORDERS, 
+            PLAY,
+            TOURNAMENT
         };
         enum GameStates {
             START,
@@ -57,12 +58,13 @@ class GameEngine {
         void Run ();
         void Play();
         void ExitProgram() { isRunning = false; }
+        void Tournament(std::vector<Map*> &M, std::vector<Player*> &P, int G, int D);
         
         // Functions for [PLAY] of Game
-        void assignReinforcement();
-        void issueOrders();
-        void executeOrders();
-        void Win();
+        void assignReinforcement(std::vector<Player*> &P);
+        void issueOrders(std::vector<Player*> &P);
+        void executeOrders(std::vector<Player*> &P);
+        void Win(std::vector<Player*> &P);
 
         ~GameEngine();
 
