@@ -16,10 +16,12 @@ private:
 public:
     Command();
     string effectString;
+    bool hasArgument(string arg) const;
     void outputCommand(const Command& cmd);
     string getName(Command cmd);
     Command(const string name);
     void saveEffect(const std::string& effStr);
+    string getEffectString(Command& cmd) const;
 };
 
 
@@ -32,11 +34,11 @@ private:
 
 public:
     //std::vector<std::string> getEffects(const Command& cmd);
-    void outputCommand(const Command& cmd);
+    //void outputCommand(const Command& cmd);
     CommandProcessor();
     void validate(Command cmd);
     Command getCommand();
-    string getEffectString(Command& cmd) const;
+    bool CommandProcessor::isValidTournamentCommand(Command cmd);
 };
 
 
