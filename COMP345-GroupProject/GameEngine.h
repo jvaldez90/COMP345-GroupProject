@@ -30,9 +30,7 @@ class GameEngine {
         GameEngine();
         std::string command;
         std::vector<Player *> P;
-
-        std::vector<Map *> M;
-    
+        std::vector<Map *> M;    
         Map *playingMap;
         
         enum GameCommands {
