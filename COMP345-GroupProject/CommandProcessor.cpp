@@ -5,8 +5,21 @@
 #include <string>
 using namespace std;
 
-string GameEngine::currentState("win");
+// Modifications made by me
+void Command::Notify(ILoggable *command)
+{
+    LogObserver logObserver;
+    logObserver.Update(command);
+}
 
+// Modifications made by me
+string Command::stringToLog()
+{
+    std::cout << "Effect: " << effectString << std::endl;
+    return "Effect: " + effectString + ".\n";
+}
+
+string GameEngine::currentState("win");
 
 Command::Command(string name)
 {
@@ -33,12 +46,26 @@ string Command::getName(Command cmd)
 void Command::saveEffect(const string &effect)
 {
     this->effectString = effect;
+    Notify(this);
+}
+
+void CommandProcessor::Notify(ILoggable *commandProcessing)
+{
+    LogObserver logObserver;
+    logObserver.Update(commandProcessing);
+}
+
+string CommandProcessor::stringToLog()
+{
+    std::cout << "Command: " << commandString << std::endl;
+    return "Command: " + commandString + ".\n";
 }
 
 void CommandProcessor::saveCommand(const string &cmdStr)
 {
     Command cmd(cmdStr);
     commands.push_back(cmd);
+    Notify(this);
 }
 
 string Command::getEffectString(Command &cmd) const
