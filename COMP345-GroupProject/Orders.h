@@ -1,399 +1,727 @@
-#pragma once
 #include <iostream>
 #include <vector>
 #include <string>
-#include <list>
-#include "Map.h"
-#include "Player.h"
-#include "LoggingObserver.h"
+#include "Orders.h"
 
 using namespace std;
 
-// Forward declaration
-class Player;
-class Territory;
+// Order class implementation
 
-class Order : public Subject, public ILoggable
+// Default constructor
+Order::Order()
 {
-
-private:
-    string *description; // pointer to a string containing the order description
-    string *effect;      // pointer to a string containing the order's effect
-    Player *player;      // pointer to the player issuing the order
-
-public:
-    // Default constructor to initialize order.
-    Order();
-
-    // Constructor to initialize an order with its description and effect
-    Order(const string &description, const string &effect);
-
-    // A parameterized constructor which initializes an order with the provided description, effect and issuing player
-    Order(const string &description, const string &effect, Player &player);
-
-    // Copy constructor
-    Order(const Order &order);
-
-    // Destructor to avoid memory leaks
-    virtual ~Order();
-
-    // Getter for the description of the order
-    virtual string *getDescription() const;
-
-    // Getter for the effect of the order
-    virtual string *getEffect() const;
-
-    // Getter for the player issuing the order
-    virtual Player *getPlayer() const;
-
-    // Setter for the description of the order
-    virtual void setDescription(const string &description);
-
-    // Setter for the effect of the order
-    virtual void setEffect(const string &effect);
-
-    // Setter for the player issuing the order
-    virtual void setPlayer(Player &player);
-
-    // Validate method to check if order if valid
-    virtual bool validate() = 0;
-
-    // Execute method to execute valid orders
-    virtual bool execute() = 0;
-
-    // Assignment operator definition
-    Order &operator=(const Order &order);
-
-    // Operator << definition
-    friend ostream &operator<<(ostream &strm, const Order &order);
+    this->description = nullptr;
+    this->effect = nullptr;
+    this->player = nullptr;
 };
 
-class Deploy : public Order
+// Constructor to initialize an order with its description and effect
+Order::Order(const string &description, const string &effect)
 {
-
-private:
-    Territory *target;
-    int armies;
-
-public:
-    // Default constructor for Deploy order object
-    Deploy();
-
-    /*Parameterized constructor for deploy order containing information on player calling deploy order, its target
-    and the number of armies deployed */
-    Deploy(Player &player, int &armies, Territory &target);
-
-    // Destructor
-    ~Deploy();
-
-    // Copy constructor
-    Deploy(const Deploy &deploy);
-
-    // validate method override from base class
-    bool validate() override;
-
-    // execute method from base class
-    bool execute() override;
-
-    // Assignment operator definition
-    Deploy &operator=(const Deploy &deploy);
-
-    // Operator << definition
-    friend ostream &operator<<(std::ostream &strm, const Deploy &deploy);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *deploy) override
-    {
-        LogObserver logObserver;
-        logObserver.Update(deploy);
-    }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
-    {
-        std::cout << "Deploy order executed." << std::endl;
-        return "Deploy order executed.\n";
-    }
+    this->description = new string(description);
+    this->effect = new string(effect);
+    this->player = nullptr;
 };
 
-class Advance : public Order
+// Parameterized constructor which initializes an Order with the provided description, effect and player who is giving the order
+Order::Order(const string &description, const string &effect, Player &player)
 {
+    this->description = new string(description);
+    this->effect = new string(effect);
+    this->player = &player;
+}
 
-private:
-    Territory *source;
-    Territory *target;
-    int armies;
+// Copy constructor
+Order::Order(const Order &order)
+{
+    this->description = new string(*(order.description));
+    this->effect = new string(*(order.effect));
+    this->player = order.getPlayer();
+}
 
-public:
-    // Default constructor for Deploy order object
-    Advance();
+// Destructor
+Order::~Order()
+{
+    delete description;
+    delete effect;
+    delete player;
+}
 
-    // Destructor
-    ~Advance();
+// Getters and setters for attributes
+string *Order::getDescription() const
+{
+    return this->description;
+}
 
-    // Copy constructor
-    Advance(const Advance &advance);
+string *Order::getEffect() const
+{
+    return this->effect;
+}
 
-    /*Parameterized constructor for advance order containing information on player
-    giving the order, the territory from which the order comes from, and the target territory*/
-    Advance(Player &player, int &armies, Territory &source, Territory &target);
+Player *Order::getPlayer() const
+{
+    return this->player;
+}
 
-    // validate method override from base class
-    bool validate() override;
+void Order::setDescription(const string &description)
+{
+    delete this->description;
+    this->description = new string(description);
+}
 
-    // execute method from base class
-    bool execute() override;
+void Order::setEffect(const string &effect)
+{
+    delete this->effect;
+    this->effect = new string(effect);
+}
 
-    // Assignment operator definition
-    Advance &operator=(const Advance &advance);
+void Order::setPlayer(Player &player)
+{
+    this->player = &player;
+}
 
-    // Operator << definition
-    friend ostream &operator<<(std::ostream &strm, const Advance &advance);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *advance) override
+// Defining the assignment operator
+Order &Order::operator=(const Order &order)
+{
+    if (this != &order)
     {
-        LogObserver logObserver;
-        logObserver.Update(advance);
+        delete this->description;
+        delete this->effect;
+        this->description = new string(*(order.description));
+        this->effect = new string(*(order.effect));
+        this->player = order.getPlayer();
     }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &strm, const Order &order)
+{
+    strm << *(order.description);
+    return strm;
+}
+
+// DEPLOY CLASS IMPLEMENTATION
+
+// Default constructor
+Deploy::Deploy() : Order("This is a deploy order", "Armies are moved to a target")
+{
+    this->target = nullptr;
+    this->armies = 0;
+}
+
+// Parameterized Constructor
+Deploy::Deploy(Player &player, int &armies, Territory &target)
+{
+    setPlayer(player);
+    this->target = &target;
+    this->armies = armies;
+}
+
+// Copy constructor
+Deploy::Deploy(const Deploy &deploy) : Order(deploy)
+{
+    this->target = deploy.target;
+    this->armies = deploy.armies;
+}
+
+// Destructor
+Deploy::~Deploy()
+{
+    delete target;
+}
+
+// Checks if a Deploy order is valid
+bool Deploy::validate()
+{
+    cout << "Validating Deploy Order..." << endl;
+    if (this->target->getTerritoryOwner() == this->getPlayer())
     {
-        std::cout << "Advance order executed." << std::endl;
-        return "Advance order executed.\n";
+        cout << "Order validated" << endl;
+        return true;
     }
+    else
+    {
+        cout << "Invalid Order: target does not belong to player" << endl;
+        return false;
+    }
+}
+
+// Executes a Deploy order
+bool Deploy::execute()
+{
+    cout << "Deploy::execute()...." << endl;
+    if (this->validate() == true)
+    {
+        cout << "Executing Deploy Order..." << endl;
+        // If order is validated, armies are added to the target territory
+        this->target->addArmies(this->armies);
+        cout << *this->getEffect() << endl;
+        Notify(this);
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// Defining the assignment operator
+Deploy &Deploy::operator=(const Deploy &deploy)
+{
+    Order::operator=(deploy);
+    this->target = deploy.target;
+    this->armies = deploy.armies;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &strm, const Deploy &deploy)
+{
+    strm << *deploy.getDescription();
+    return strm;
+}
+
+// ADVANCE CLASS IMPLEMENTATION
+
+// Default constructor
+Advance::Advance() : Order("This is an advance order", "Number of armies are moved from source to target")
+{
+    this->source = nullptr;
+    this->target = nullptr;
+    this->armies = 0;
+}
+
+// Parameterized Constructor
+Advance::Advance(Player &player, int &armies, Territory &source, Territory &target) : Advance()
+{
+    setPlayer(player);
+    this->source = &source;
+    this->target = &target;
+    this->armies = armies;
+}
+
+// Copy constructor
+Advance::Advance(const Advance &advance) : Order(advance)
+{
+    this->source = advance.source;
+    this->target = advance.target;
+    this->armies = advance.armies;
+}
+
+// Destructor
+Advance::~Advance()
+{
+    this->source = nullptr;
+    this->target = nullptr;
 };
 
-class Blockade : public Order
+// Checks if an Advance order is valid
+// MISSING PROPER IMPLEMENTATION FOR VALIDATE AND EXECUTE
+bool Advance::validate()
 {
-
-private:
-    Territory *target;
-
-public:
-    // Default constructor
-    Blockade();
-
-    // Parameterized Constructor containing information on player calling the blockade and its target
-    Blockade(Player &player, Territory &target);
-
-    // Copy constructor
-    Blockade(const Blockade &blockade);
-
-    // Destructor
-    ~Blockade();
-
-    // Override validate method from base class
-    bool validate() override;
-
-    // Override execute method from base class
-    bool execute() override;
-
-    // Defining the output operator
-    friend ostream &operator<<(ostream &strm, const Blockade &blockade);
-
-    // Defining the assignment operator
-    Blockade &operator=(const Blockade &blockade);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *blockade) override
+    cout << "Validating Advance Order..." << endl;
+    // Verify if source territory belongs to player issuing orders
+    if (this->source->getTerritoryOwner() != this->getPlayer())
     {
-        LogObserver logObserver;
-        logObserver.Update(blockade);
+        cout << "Invalid order: source does not belong to player" << endl;
+        return false;
     }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
+    // Verifying if source is adjacent to target
+    for (Territory *adjacent_territory : this->target->get_neighbour_territory())
     {
-        std::cout << "Blockade order executed." << std::endl;
-        return "Blockafe order executed.\n";
+        if (this->source == adjacent_territory)
+        {
+            cout << "Order validated";
+            return true;
+        }
     }
+    cout << "Invalid order : Target is not adjacent" << endl;
+    return false;
+}
+
+// Executes an Advance order
+bool Advance::execute()
+{
+    cout << "Advance::execute()...." << endl;
+    if (this->validate() == true)
+    {
+        cout << "Executing Advance Order..." << endl;
+        Notify(this);
+        // Verify if both target and source belong to issuing player
+        if (this->source->getTerritoryOwner() == this->getPlayer() && this->target->getTerritoryOwner() == this->getPlayer())
+        {
+            cout << "Both territories belong to player issuing orders" << endl;
+            this->target->addArmies(armies);    // Add armies to target territory
+            this->source->deleteArmies(armies); // Retrieve armies from source territory
+            this->setEffect("army units are moved from the source to the target territory.");
+            cout << *this->getEffect() << endl;
+        }
+        // Still have to implement actual attack mechanism when territories are not owned by same player
+        else
+        {
+
+            int attack_armies = this->armies;
+            int defend_armies = target->getNumberOfArmies();
+            this->source->deleteArmies(attack_armies);
+            // cout << "Advance::execute() BEFORE BATTLE | Attacking armies: " << attackingArmies << " | Defending armies: " << defendingArmies << endl;
+            for (int i = 0; i < attack_armies; i++)
+            {
+                /* For each army, generate a random value up to 100, if 60 of those values are <= 60,
+                then we have 60% probability */
+                int chanceOfAttack = rand() % 100 + 1;
+                // If possibility is 60%, attack is successful, defending army is killed
+                if (chanceOfAttack <= 60)
+                {
+                    if (defend_armies == 0)
+                    {
+                        break;
+                    }
+                    defend_armies--;
+                }
+            }
+            // Same logic here, with 70% probability that defense is successful
+            for (int i = 0; i < defend_armies; i++)
+            {
+                int chanceOfDefence = rand() % 100 + 1;
+                if (chanceOfDefence <= 70)
+                {
+                    if (attack_armies == 0)
+                    {
+                        break;
+                    }
+                    attack_armies--;
+                }
+            }
+        }
+    }
+}
+
+// Defining the assignment operator
+Advance &Advance::operator=(const Advance &advance)
+{
+    Order::operator=(advance);
+    this->source = advance.source;
+    this->target = advance.target;
+    this->armies = advance.armies;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &out, const Advance &advance)
+{
+    out << *advance.getDescription();
+    return out;
+}
+
+// BLOCKADE CLASS IMPLEMENTATION
+
+// Default constructor
+Blockade::Blockade() : Order("This is a blockade order", "Number of armies are multiplied in a target territory")
+{
+    this->target = nullptr;
+}
+
+// Parameterized Constructor
+Blockade::Blockade(Player &player, Territory &target) : Blockade()
+{
+    setPlayer(player);
+    this->target = &target;
+}
+
+// Copy constructor
+Blockade::Blockade(const Blockade &blockade) : Order(blockade)
+{
+    this->target = blockade.target;
+}
+
+// Destructor
+Blockade::~Blockade()
+{
+    this->target = nullptr;
 };
 
-class Airlift : public Order
+// Checks if a Blockade order is valid
+bool Blockade::validate()
 {
-
-private:
-    Territory *source;
-    Territory *target;
-    int armies;
-
-public:
-    // Default constructor
-    Airlift();
-
-    // Parameterized Constructor
-    Airlift(Player &player, int &armies, Territory &source, Territory &target);
-
-    // Copy constructor
-    Airlift(const Airlift &airlift);
-
-    // Destructor
-    ~Airlift();
-
-    // Checks if a Bomb order is valid
-    bool validate() override;
-
-    // Executes a Bomb order
-    bool execute() override;
-
-    // Defining the output operator
-    friend ostream &operator<<(ostream &strm, const Airlift &airlift);
-
-    // Defining the assignment operator
-    Airlift &operator=(const Airlift &airlift);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *airlift) override
+    cout << "Validating Blockade Order..." << endl;
+    if (this->target->getTerritoryOwner() == this->getPlayer())
     {
-        LogObserver logObserver;
-        logObserver.Update(airlift);
+        cout << "Order validated" << endl;
+        return true;
     }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
+    else
     {
-        std::cout << "Airlift order executed." << std::endl;
-        return "Airlift order executed.\n";
+        cout << "Invalid Order: target does not belong to player" << endl;
+        return false;
     }
+}
+
+// Executes a Blockade order
+bool Blockade::execute()
+{
+    cout << "Blockade::execute()...." << endl;
+    Notify(this);
+    if (this->validate())
+    {
+        cout << "Executing Blockade Order..." << endl;
+        // Double the number of armies on target
+        this->target->addArmies(this->target->getNumberOfArmies());
+        this->getPlayer()->removeTerritory(*this->target);
+
+        // Missing implementation for neutral player
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// Defining the assignment operator
+Blockade &Blockade::operator=(const Blockade &blockade)
+{
+    Order::operator=(blockade);
+    this->target = blockade.target;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &out, const Blockade &blockade)
+{
+    out << *blockade.getDescription();
+    return out;
+}
+
+// BOMB CLASS IMPLEMENTATION
+
+// Default constructor
+Bomb::Bomb() : Order("This is a bomb order", "Half of the armies removed from target.")
+{
+    this->target = nullptr;
+}
+
+// Parameterized Constructor
+Bomb::Bomb(Player &player, Territory &target) : Bomb()
+{
+    setPlayer(player);
+    this->target = &target;
+}
+
+// Copy constructor
+Bomb::Bomb(const Bomb &bomb) : Order(bomb)
+{
+    this->target = bomb.target;
+}
+
+// Destructor
+Bomb::~Bomb()
+{
+    this->target = nullptr;
 };
 
-class Bomb : public Order
+// Checks if a Bomb order is valid
+bool Bomb::validate()
 {
-
-private:
-    Territory *target;
-
-public:
-    // Default constructor
-    Bomb();
-
-    // Parameterized Constructor
-    Bomb(Player &player, Territory &target);
-
-    // Copy constructor
-    Bomb(const Bomb &bomb);
-
-    // Destructor
-    ~Bomb();
-
-    // Checks if a Bomb order is valid
-    bool validate() override;
-
-    // Executes a Bomb order
-    bool execute() override;
-
-    // Defining the output operator
-    friend ostream &operator<<(ostream &strm, const Bomb &bomb);
-
-    // Defining the assignment operator
-    Bomb &operator=(const Bomb &bomb);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *bomb) override
+    cout << "Validating Bomb Order..." << endl;
+    if (this->target->getTerritoryOwner() == this->getPlayer())
     {
-        LogObserver logObserver;
-        logObserver.Update(bomb);
+        cout << "Invalid order : The target already belongs to the player" << endl;
+        return false;
     }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
+    else
     {
-        std::cout << "Bomb order executed." << std::endl;
-        return "Bomb order executed.\n";
+        for (Territory *adjacent_territory : this->target->get_neighbour_territory())
+        {
+            if (adjacent_territory->getTerritoryOwner() == this->getPlayer())
+            {
+                cout << "Order validated";
+                return true;
+            }
+        }
+        cout << "Invalid order : Target is not adjacent" << endl;
+        return false;
     }
+}
+
+// Executes a Bomb order
+bool Bomb::execute()
+{
+    cout << "Blockade::execute()...." << endl;
+    Notify(this);
+    this->target->setNumberOfArmies(this->target->getNumberOfArmies() / 2);
+    this->setEffect("Half of the armies have been removed from the target!");
+    cout << *this->getEffect() << endl;
+}
+
+// Defining the assignment operator
+Bomb &Bomb::operator=(const Bomb &bomb)
+{
+    Order::operator=(bomb);
+    this->target = bomb.target;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &out, const Bomb &bomb)
+{
+    out << *bomb.getDescription();
+    return out;
+}
+
+// AIRLIFT CLASS IMPLEMENTATION
+
+// Default constructor
+Airlift::Airlift() : Order("This is an airlift order", "Armies moved from source to target")
+{
+    this->source = nullptr;
+    this->target = nullptr;
+    this->armies = 0;
+}
+
+// Parameterized Constructor
+Airlift::Airlift(Player &player, int &armies, Territory &source, Territory &target) : Airlift()
+{
+    setPlayer(player);
+    this->source = &source;
+    this->target = &target;
+    this->armies = armies;
+}
+
+// Copy constructor
+Airlift::Airlift(const Airlift &airlift) : Order(airlift)
+{
+    this->source = airlift.source;
+    this->target = airlift.target;
+    this->armies = airlift.armies;
+}
+
+// Destructor
+Airlift::~Airlift()
+{
+    this->source = nullptr;
+    this->target = nullptr;
 };
 
-class Negotiate : public Order
+// Checks if an Airlift order is valid
+bool Airlift::validate()
 {
-
-private:
-    Player *enemy;
-
-public:
-    // Default constructor
-    Negotiate();
-
-    // Parameterized Constructor
-    Negotiate(Player &player, Player &enemy);
-
-    // Copy constructor
-    Negotiate(const Negotiate &negotiate);
-
-    // Destructor
-    ~Negotiate();
-
-    // Checks if a Bomb order is valid
-    bool validate() override;
-
-    // Executes a Bomb order
-    bool execute() override;
-
-    // Defining the output operator
-    friend ostream &operator<<(ostream &strm, const Negotiate &negociate);
-
-    // Defining the assignment operator
-    Negotiate &operator=(const Negotiate &negociate);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *nego) override
+    cout << "Validating Airlift Order..." << endl;
+    if (this->source->getTerritoryOwner() != this->getPlayer())
     {
-        LogObserver logObserver;
-        logObserver.Update(nego);
+        cout << "Invalid order : Source does not belong to player" << endl;
+        return false;
     }
-
-    // modifications made by Tala
-    inline std::string stringToLog() override
+    else if (this->target->getTerritoryOwner() != this->getPlayer())
     {
-        std::cout << "Negotiate order executed." << std::endl;
-        return "Negotiate order executed.\n";
+        cout << "Invalid order : Target does not belong to player" << endl;
+        return false;
     }
+    cout << "Order validated" << endl;
+    return true;
+}
+
+// Executes an Airlift order
+bool Airlift::execute()
+{
+    cout << "Airlift::execute()..." << endl;
+    Notify(this);
+    if (this->validate())
+    {
+        cout << "Executing Airlift Order..." << endl;
+        this->source->deleteArmies(armies);
+        this->target->addArmies(armies);
+        cout << *this->getEffect() << endl;
+    }
+}
+// Defining the assignment operator
+Airlift &Airlift::operator=(const Airlift &airlift)
+{
+    Order::operator=(airlift);
+    this->source = airlift.source;
+    this->target = airlift.target;
+    this->armies = airlift.armies;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &strm, const Airlift &airlift)
+{
+    strm << *airlift.getDescription();
+    return strm;
+}
+
+// NEGOTIATE CLASS IMPLEMENTATION
+
+// Default constructor
+Negotiate::Negotiate() : Order("This is a negotiate order", "Players are prohibited from attacking each other during this turn")
+{
+    this->enemy = nullptr;
+}
+
+// Parameterized Constructor
+Negotiate::Negotiate(Player &player, Player &enemy) : Negotiate()
+{
+    setPlayer(player);
+    this->enemy = &enemy;
+}
+
+// Copy constructor
+Negotiate::Negotiate(const Negotiate &negotiate) : Order(negotiate)
+{
+    this->enemy = negotiate.enemy;
+}
+
+// Destructor
+Negotiate::~Negotiate()
+{
+    this->enemy = nullptr;
 };
 
-class OrderList : public Subject, public ILoggable
+// Checks if a Negotiate order is valid
+bool Negotiate::validate()
 {
-
-private:
-    vector<Order *> *orders;
-
-public:
-    // Constructor for the orders list
-    OrderList();
-
-    // Copy constructor
-    OrderList(const OrderList &orders);
-
-    // Destructor for the orders list
-    ~OrderList();
-
-    // Move function to move order in the list of orders
-    void move(int startPosition, int EndPosition);
-
-    // Remove function to delete an order from the list
-    void remove(int position);
-
-    // Getter for orders list
-    vector<Order *> *getOrderList() const;
-
-    // Defining the assignment operator
-    OrderList &operator=(const OrderList &ordersList);
-
-    // Defining the output operator
-    friend ostream &operator<<(ostream &out, const OrderList &orderlist);
-
-    // Method to add order to the orders list
-    void add(Order *order);
-
-    // Modifications made by Tala
-    inline void Notify(ILoggable *orderList) override
+    cout << "Negotiate::execute()..." << endl;
+    if (this->enemy == this->getPlayer())
     {
-        LogObserver logObserver;
-        logObserver.Update(orderList);
+        cout << "Invalid order : Target is the player issuing the order" << endl;
+        return false;
     }
-    // Modifications made by Tala
-    inline std::string stringToLog() override
+    return true;
+}
+
+// Executes a Negotiate order
+bool Negotiate::execute()
+{
+    cout << "Negotiate::execute()..." << endl;
+    // Temporary implementation, still have to code the behavior to label the attacks as invalid
+    if (this->validate() == true)
     {
-        std::cout << "Order added to the order list: " << *(getOrderList()->at(0)) << std::endl;
-        std::string str;
-        std::stringstream ss;
-        ss << *(getOrderList()->at(0));
-        ss >> str;
-        return "Order added to the order list: " + str + ".\n";
+        cout << "For the remainder of the turn, any attack between " << this->getPlayer()->getName() << " and " << this->enemy->getName() << " will be invalid" << endl;
+        Notify(this);
     }
-};
+}
+
+// Defining the assignment operator
+Negotiate &Negotiate::operator=(const Negotiate &negotiate)
+{
+    Order::operator=(negotiate);
+    this->enemy = negotiate.enemy;
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &strm, const Negotiate &negotiate)
+{
+    strm << *negotiate.getDescription();
+    return strm;
+}
+
+// ORDERS LIST CLASS IMPLEMENTATION
+
+// Default constructor
+OrderList::OrderList()
+{
+    this->orders = new vector<Order *>();
+}
+
+// Copy constructor
+OrderList::OrderList(const OrderList &orders_list) : OrderList()
+{
+    for (int i = 0; i < orders_list.getOrderList()->size(); i++)
+    {
+        Order *order = orders_list.orders->at(i);
+        this->add(order);
+    }
+}
+
+// Destructor
+OrderList::~OrderList()
+{
+    // deallocate each individual order
+    for (Order *order : *this->orders)
+    {
+        delete order;
+    }
+    // Deallocate the pointer to the list itself
+    delete this->orders;
+    // Set the pointer to the list to null to avoid wild pointers
+    this->orders = nullptr;
+}
+
+// Move an Order in the vector to a new index by providing its current index and the index it should be moved to
+void OrderList::move(int startPosition, int endPosition)
+{
+    // Making sure the indexes fit within the range of the list
+    if (startPosition < this->orders->size() && endPosition < this->orders->size() && startPosition >= 0 && endPosition >= 0)
+    {
+        // Get the element to be moved
+        Order *order_to_move = this->orders->at(startPosition);
+        // Remove order from the start index and insert it at the wanted index
+        this->orders->erase(this->orders->begin() + startPosition);
+        this->orders->insert(this->orders->begin() + endPosition, order_to_move);
+    }
+    else
+    {
+        cout << "The index inputed is invalid, please try again" << endl;
+    }
+}
+
+// Deletes an order from the list at an index
+void OrderList::remove(const int index_removed)
+{
+    // Verify if index given is within range of the list
+    if (index_removed >= 0 && index_removed < this->orders->size())
+    {
+        // Deallocating the pointer to the object
+        delete this->orders->at(index_removed);
+        // Delete the object itself
+        this->orders->erase(this->orders->begin() + index_removed);
+    }
+    else
+    {
+        // Index is not within range
+        cout << "Your index is invalid, please try again" << endl;
+    }
+}
+
+// Getter for the vector of orders
+vector<Order *> *OrderList::getOrderList() const
+{
+    return this->orders;
+}
+
+// Add an order to the vector by providing an Order
+void OrderList::add(Order *order)
+{
+    this->orders->push_back(order);
+    Notify(this);
+}
+
+OrderList &OrderList::operator=(const OrderList &list)
+{
+    if (this != &list)
+    {
+        // remove orders from LHS
+        for (int pos = 0; pos < this->orders->size(); pos++)
+        {
+            this->remove(pos);
+        }
+        // add all orders from RHS to LHS
+        for (int i = 0; i < list.getOrderList()->size(); i++)
+        {
+            Order *o = list.orders->at(i);
+            this->add(o);
+        }
+    }
+    return *this;
+}
+
+// Defining the output operator
+ostream &operator<<(ostream &strm, const OrderList &list)
+{
+    for (Order *order : *(list.orders))
+    {
+        strm << *order << endl;
+    }
+    return strm;
+}
