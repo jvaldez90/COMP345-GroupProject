@@ -2,12 +2,12 @@
 #include <algorithm>
 #include <iostream>
 
-// Constructor
-Player::Player(std::string playerName)
+Player::Player(std::string playerName, PlayerStrategy *strategy)
 {
-    this->playerName = &playerName;
+    this->playerName = new std::string(playerName); // Allocate memory for playerName pointer
     this->hand = new Hand();
     OL = new OrderList();
+    this->strategy = strategy;
 
     // Display of the confirmation that player has been created
     std::cout << "Player " << playerName << " has been created." << std::endl;
