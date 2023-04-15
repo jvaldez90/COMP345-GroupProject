@@ -178,34 +178,34 @@ void GameEngine::Run()
             std::cin >> number;
             // PUSH_BACK map files into VECTOR<MAP *>
             if (number == 1)
-            { // MAP LEVEL 1
-                M.push_back("bigeurope.map");
+            {
+                M.push_back("bigeurope.map");           // MAP LEVEL 1
             }
             else if (number == 2)
-            { // MAP LEVEL 2
-                M.push_back("bigeurope.map");
-                M.push_back("europass.map");
+            {
+                M.push_back("bigeurope.map");           // MAP LEVEL 1
+                M.push_back("europass.map");            // MAP LEVEL 2
             }
             else if (number == 3)
-            { // MAP LEVEL 3
-                M.push_back("bigeurope.map");
-                M.push_back("europass.map");
-                M.push_back("MiddleEast-Qatar.map");
+            {
+                M.push_back("bigeurope.map");           // MAP LEVEL 1
+                M.push_back("europass.map");            // MAP LEVEL 2
+                M.push_back("MiddleEast-Qatar.map");    // MAP LEVEL 3
             }
             else if (number == 4)
-            { // MAP LEVEL 4
-                M.push_back("bigeurope.map");
-                M.push_back("europass.map");
-                M.push_back("MiddleEast-Qatar.map");
-                M.push_back("spain.map");
+            {
+                M.push_back("bigeurope.map");           // MAP LEVEL 1
+                M.push_back("europass.map");            // MAP LEVEL 2
+                M.push_back("MiddleEast-Qatar.map");    // MAP LEVEL 3
+                M.push_back("spain.map");               // MAP LEVEL 4
             }
             else if (number == 5)
-            { // MAP LEVEL 5
-                M.push_back("bigeurope.map");
-                M.push_back("europass.map");
-                M.push_back("MiddleEast-Qatar.map");
-                M.push_back("spain.map");
-                M.push_back("swiss.map");
+            {
+                M.push_back("bigeurope.map");           // MAP LEVEL 1
+                M.push_back("europass.map");            // MAP LEVEL 2
+                M.push_back("MiddleEast-Qatar.map");    // MAP LEVEL 3
+                M.push_back("spain.map");               // MAP LEVEL 4
+                M.push_back("swiss.map");               // MAP LEVEL 5
             }
             else
             {
@@ -284,7 +284,7 @@ void GameEngine::Run()
         std::cout << turns << " is the number of turns each player gets in each game." << std::endl;
 
         // TOURNAMENT MODE COMMAND is set **
-        GameEngine::Tourmanent(M, P, games, turns);
+        GameEngine::Tournament(M, P, games, turns);
     }
     else
     { // SETUP FOR REGULAR GAMEPLAY
@@ -302,8 +302,7 @@ void GameEngine::Run()
     // DISPLAY THE END OF GAME IN BOTH MODES
     std::cout << std::endl;
     std::cout << "================" << std::endl;
-    std::cout << "    GAMEOVER    " << std:;
-    endl;
+    std::cout << "    GAMEOVER    " << std::endl;
     std::cout << "================" << std::endl;
 }
 // startUpPhase()
@@ -434,7 +433,7 @@ void GameEngine::Play()
     std::cout << std::endl;
     for (int i = 0; i < GameEngine::playerCounter; i++)
     {
-        // In vector<Player> p assign initial number of territories from playingMap to each player
+        // In vector<Player *> P assign initial number of territories from playingMap to each player
         // Create lst of territories
         // call to Player::setTerritories
     }
@@ -563,6 +562,7 @@ void GameEngine::Play()
     }
     else if (command == "quit")
     {
+        // Delete all pointer variables/objects properly
         P = nullptr;
         playingMap = nullptr;
         generateOrder = nullptr;
@@ -625,7 +625,6 @@ void GameEngine::mapLoaded()
 // MapValidated()
 void GameEngine::MapValidated(std::string &command)
 {
-
     std::cout << std::endl;
     std::cout << "GameEngine::MapValidated()" << std::endl;
     std::cout << "============================" << std::endl;
@@ -649,7 +648,6 @@ void GameEngine::MapValidated(std::string &command)
 // playersAdded()
 void GameEngine::playersAdded()
 {
-
     std::cout << std::endl;
     std::cout << "GameEngine::playersAdded()" << std::endl;
     std::cout << "============================" << std::endl;
@@ -667,7 +665,6 @@ void GameEngine::playersAdded()
 // assignReinforcement() **
 void GameEngine::assignReinforcement(std::vector<Player *> &P)
 {
-
     std::cout << std::endl;
     std::cout << "GameEngine::assignReinforcement()" << std::endl;
     std::cout << "=================================" << std::endl;
@@ -719,7 +716,7 @@ void GameEngine::InvalidCommand()
 }
 
 // TOURNAMENT MODE **
-void GameEngine::Tournament(std::vector<Map *> &M, std::vector<Player *> &P, int G, int D)
+void GameEngine::Tournament(std::vector<Map *> M, std::vector<Player *> P, int G, int D)
 {
     std::cout << std::endl;
     std::cout << "TOURNAMENT MODE" << std::endl;
@@ -741,7 +738,6 @@ void GameEngine::Tournament(std::vector<Map *> &M, std::vector<Player *> &P, int
     // In a round robin fashion assign territories to each player
     for (int j = 0; j < M[j]->getTerritories().size(); j++)
     {
-
         for (int k = 0; k < P.size(); k++)
         {
             P[k]->territories.push_back(M[j]->getTerritories().at(j));
@@ -753,11 +749,23 @@ void GameEngine::Tournament(std::vector<Map *> &M, std::vector<Player *> &P, int
         // Load  map object and validate map file
         GameEngine::MapValidated(M[mapCounter]);
 
+        // Display which map is currently in play
+        std::cout << std::endl;
+        std::cout << "MAP: " << M[mapcounter] << std::endl;
+
         for (int gameCounter = 0; gameCounter < G; gameCounter++)
         { // FOR-LOOP for tournament games
 
+            // Display which game is currently in play
+            std::cout << std::endl;
+            std::cout << "GAME " << (gameCounter + 1) << std::endl;
+
             for (int turnCounter = 0; turnCounter < D; turnCounter++)
             { // FOR-LOOP for number of turns
+
+                // Display what is the current turn of the players
+                std::cout << std::endl;
+                std::cout << "TURN "<< (turnCounter + 1) << std::endl;
 
                 // SETUP OF TOURNAMENT MODE
                 for (int currentPlayer = 0; currentPlayer < P.size(); currentPlayer++)
@@ -779,5 +787,13 @@ void GameEngine::Tournament(std::vector<Map *> &M, std::vector<Player *> &P, int
         } /* END of gameCounter FOR-LOOP */
 
     } /* END of mapCounter FOR-LOOP */
+    
+    // Delete all pointer variables/objects properly
+    P = nullptr;
+    M = nullptr;
+
+    delete P;
+    delete M;
+
     GameEngine::ExitProgram();
 }

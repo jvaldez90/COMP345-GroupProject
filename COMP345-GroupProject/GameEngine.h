@@ -37,7 +37,7 @@ public:
     GameEngine();
     std::string command;
     std::vector<Player *> P;
-    std::vector<Map *> M;
+    std::vector<const Map *> M;
     Map *playingMap;
 
     enum GameCommands
@@ -67,7 +67,7 @@ public:
     void Run();
     void Play();
     void ExitProgram() { isRunning = false; }
-    void Tournament(std::vector<Map *> &M, std::vector<Player *> &P, int G, int D);
+    void Tournament(std::vector<Map *> M, std::vector<Player *> P, int G, int D);
 
     // Functions for [PLAY] of Game
     void assignReinforcement(std::vector<Player *> &P);
