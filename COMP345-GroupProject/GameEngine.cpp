@@ -24,13 +24,80 @@
 // SWITCH CASES FOR ENUMERATIONS
 // Reference: https://en.cppreference.com/w/cpp/language/enum
 
-// Modifications made by me
+void GameEngine::reinforcementPhase()
+{
+    for (const auto &player : P)
+    {
+        for (const auto con : playingMap->getContinents())
+        {
+            int counter = 0;
+            for (const auto terr : con->getTerritories())
+            {
+                for (const auto terrPlayer : player->getTerritories())
+                {
+                    if (terr == terrPlayer)
+                    {
+                        counter++;
+                    }
+                }
+            }
+
+            if (counter == con->getTerritories().size())
+            {
+                player->reinforcementPool += con->control_bonus;
+            }
+
+            counter = 0;
+        }
+
+        if (player->getTerritories().size() <= 9)
+        {
+            player->reinforcementPool += 3;
+        }
+        else
+        {
+            player->reinforcementPool += (floor(player->getTerritories().size() / 3));
+        }
+    }
+}
+
+void GameEngine::issueOrdersPhase()
+{
+    for (const auto &player : P)
+    {
+        player->issueOrder(player->getStrategy());
+        std::cout << "Order issue for player" << player->getName() << std::endl;
+    }
+}
+
+void GameEngine::executeOrdersPhase()
+{
+    int counter = 0;
+    bool empty = false;
+
+    while (!empty)
+    {
+        for (const auto player : P)
+        {
+            if (player->getOL()->getOrderList()->size() != 0)
+            {
+                Order *order = player->getOL()->getOrderList()->front();
+                player->getOL()->getOrderList()->pop_back();
+                std::cout << "order is popped." << std::endl;
+                order->execute();
+                std::cout << "order is executed" << std::endl;
+            }
+        }
+    }
+}
+
+// Modifications made by tala
 void GameEngine::Notify(ILoggable *gameEngine)
 {
     LogObserver logObserver;
     logObserver.Update(gameEngine);
 }
-// Modifications made by me
+// Modifications made by tala
 std::string GameEngine::stringToLog()
 {
     std::string s;
