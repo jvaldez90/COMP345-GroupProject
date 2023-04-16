@@ -13,7 +13,7 @@ private:
     std::string *playerName;
     std::vector<Territory *> toDefendList;
     std::vector<Territory *> toAttackList;
-    int reinforcementPool;
+    
 
     // Divide territories method
     void divideTerritories();
@@ -21,6 +21,7 @@ private:
     PlayerStrategy *strategy; // Add PlayerStrategy data member
 
 public:
+    int reinforcementPool;
     // Constructor
     Player(std::string playerName);
 
