@@ -2,12 +2,11 @@
 #include <algorithm>
 #include <iostream>
 
-Player::Player(std::string playerName, PlayerStrategy *strategy)
+Player::Player(std::string playerName)
 {
     this->playerName = new std::string(playerName); // Allocate memory for playerName pointer
     this->hand = new Hand();
     OL = new OrderList();
-    this->strategy = strategy;
 
     // Display of the confirmation that player has been created
     std::cout << "Player " << playerName << " has been created." << std::endl;
@@ -22,70 +21,20 @@ Player::~Player()
     std::cout << "A Player has been deleted." << std::endl;
 }
 
-// divideTerritories method that randomizes the list of territories and assigns it to Defend and to Attack
-void Player::divideTerritories()
-{
-    std::vector<Territory *> dividedTerritories = this->territories;
-    std::random_shuffle(dividedTerritories.begin(), dividedTerritories.end());
-
-    int half = dividedTerritories.size() / 2;
-
-    toDefendList = std::vector<Territory *>(dividedTerritories.begin(), dividedTerritories.begin() + half);
-    toAttackList = std::vector<Territory *>(dividedTerritories.begin() + half, dividedTerritories.end());
-}
-
 // ToDefend method
-std::vector<Territory *> Player::toDefend()
+std::vector<Territory *> Player::toDefend(PlayerStrategy *ps)
 {
-    if (toDefendList.empty())
-    {
-        divideTerritories();
-    }
-    return toDefendList;
+    return ps->toDefend();
 }
 
 // ToAttack method
-std::vector<Territory *> Player::toAttack()
+std::vector<Territory *> Player::toAttack(PlayerStrategy *ps)
 {
-    if (toAttackList.empty())
-    {
-        divideTerritories();
-    }
-    return toAttackList;
+    return ps->toAttack();
 }
 
 // IssueOrder method
-void Player::issueOrder(std::string orderType)
+void Player::issueOrder(PlayerStrategy *ps)
 {
-    Order *newOrder = nullptr;
-    if (orderType == "deploy")
-    {
-        newOrder = new Deploy();
-    }
-    else if (orderType == "advance")
-    {
-        newOrder = new Advance();
-    }
-    else if (orderType == "bomb")
-    {
-        newOrder = new Bomb();
-    }
-    else if (orderType == "blockade")
-    {
-        newOrder = new Blockade();
-    }
-    else if (orderType == "airlift")
-    {
-        newOrder = new Airlift();
-    }
-    else if (orderType == "negotiate")
-    {
-        newOrder = new Negotiate();
-    }
-    else
-    {
-        std::cout << "Invalid order type, please try again." << std::endl;
-    }
-
-    this->OL->add(newOrder);
+    ps->issueOrder();
 }
