@@ -13,6 +13,7 @@ private:
     std::string *playerName;
     std::vector<Territory *> toDefendList;
     std::vector<Territory *> toAttackList;
+    int reinforcementPool;
 
     // Divide territories method
     void divideTerritories();
@@ -47,4 +48,5 @@ public:
     void setOL(OrderList *newOL) { OL = newOL; }
     void setHand(Hand *newHand) { hand = newHand; }
     void setStrategy(PlayerStrategy *newStrategy) { strategy = newStrategy; } // Add mutator for PlayerStrategy
+    
 };
