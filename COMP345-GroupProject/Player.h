@@ -32,7 +32,9 @@ public:
     std::vector<Territory *> territories;
     std::vector<Territory *> toDefend(PlayerStrategy *);
     std::vector<Territory *> toAttack(PlayerStrategy *);
-
+    
+    void setAggressive() { setStrategy(new AggressivePlayerStrategy()); }
+    
     // IssueOrder method
     void issueOrder(PlayerStrategy *);
 
