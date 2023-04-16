@@ -742,6 +742,8 @@ void GameEngine::assignReinforcement(std::vector<Player *> &P)
 
     // Assign armies among each current Player's territories
     P->divideTerritories()->getTerritories();
+
+    GameEngine::reinforcementPhase();
 }
 
 // ASSIGNMENT 2 - PART 3: ORDERS EXECUTION PHASE
@@ -759,6 +761,8 @@ void GameEngine::issueOrders(std::vector<Player *> &P)
 
     // issueOrders until current Player is done
     P->issueOrder(std::string orderType);
+
+    GameEngine::issueOrdersPhase();
 }
 // executeOrders() PHASE **
 void GameEngine::executeOrders(std::vector<Player *> &P)
@@ -775,6 +779,8 @@ void GameEngine::executeOrders(std::vector<Player *> &P)
     // Attack and Defend until current Player is done
     P->toAttack();
     P->toDefend();
+
+    GameEngine::executeOrdersPhase();
 }
 // InvalidCommand()
 void GameEngine::InvalidCommand()
