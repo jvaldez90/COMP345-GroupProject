@@ -74,6 +74,11 @@ public:
     void issueOrders(std::vector<Player *> &P);
     void executeOrders(std::vector<Player *> &P);
     void Win(std::vector<Player *> &P);
+    
+    // Modifications
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
 
     ~GameEngine();
 
