@@ -294,6 +294,12 @@ bool Advance::execute()
             }
         }
     }
+    // Check if the target territory's player has a NeutralPlayerStrategy
+        if (typeid(*target->getPlayer()->getStrategy()) == typeid(NeutralPlayerStrategy))
+        {
+            // Call beingAttacked() for the target player
+            target->getPlayer()->setAggressive();
+        }
 }
 
 // Defining the assignment operator
