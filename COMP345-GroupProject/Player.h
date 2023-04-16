@@ -21,18 +21,18 @@ private:
 
 public:
     // Constructor
-    Player(std::string playerName, PlayerStrategy *strategy);
+    Player(std::string playerName);
 
     // Destructor
     ~Player();
 
     // ToDefend and ToAttack methods
     std::vector<Territory *> territories;
-    std::vector<Territory *> toDefend() { return strategy->toDefend(this); } // Delegate to the corresponding PlayerStrategy method
-    std::vector<Territory *> toAttack() { return strategy->toAttack(this); } // Delegate to the corresponding PlayerStrategy method
+    std::vector<Territory *> toDefend(PlayerStrategy *);
+    std::vector<Territory *> toAttack(PlayerStrategy *);
 
     // IssueOrder method
-    void issueOrder(std::string orderType) { strategy->issueOrder(this, orderType); } // Delegate to the corresponding PlayerStrategy method
+    void issueOrder(PlayerStrategy *);
 
     // Accessors
     std::string getName() const { return *playerName; }
