@@ -668,7 +668,7 @@ void GameEngine::Win(std::vector<Player *> &P)
     {
         if (P[counter]->getTerritories.size() == maxTerritories)
         {
-            std::cout << P->playerStrategy << " Player wins." << std::endl
+            std::cout << P->playerStrategy << " Player wins." << std::endl;
         }
     }
     std::cout << std::endl;
